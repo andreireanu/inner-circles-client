@@ -44,7 +44,7 @@ export const Navbar = () => {
           }}
         >
           <Image
-            src='/assets/img/inner-circles2.png'
+            src='/assets/img/inner-circles3.jpg'
             className='inner-circles-logo'
             width={67}
             height={62}
