@@ -1,20 +1,27 @@
 import clientPromise from '../../lib/mongodb'
 import { InferGetServerSidePropsType } from 'next'
+import Head from 'next/head';
+import SendIcon from '@mui/icons-material/Send';
 
 import {
+  Button,
   Card,
   CardContent,
   Container,
   ImageList,
   ImageListItem,
   ImageListItemBar,
+  TextField,
   Typography
 } from '@mui/material';
-import Head from 'next/head';
+
+import { useGetAccount } from '@multiversx/sdk-dapp/hooks';
 import { useRouter } from 'next/router';
 import { NotAuthRedirectWrapper } from '../../components/NotAuthRedirectWrapper';
 
 const FanDashboardPage = ({ fan_data }: any) => {
+
+  const { address } = useGetAccount();
 
   return (
     <>
@@ -22,30 +29,20 @@ const FanDashboardPage = ({ fan_data }: any) => {
         <title>Fan dashboard</title>
         <meta name='description' content='Fan dashboard' />
       </Head>
-      <Container maxWidth='sm' sx={{ mt: 5 }}>
-        {fan_data.map((todo: any) => (
-          <li
-            className={"flex mb-4 pb-4 items-center border-b-2 border-gray-300"}
-            key={todo._id}>
-            <p className={`w-full 
-                                ${todo.completed ? "line-through text-green-600" : ""}`} >
-              {todo.title}
-            </p>
-            <button className={`flex-no-shrink p-2 ml-4 mr-2 border-2 rounded hover:text-white
-                                ${todo.completed
-                ? "text-green-500 border-green-500 hover:bg-green-500"
-                : "text-onMakeOffergray-500 border-gray-500 hover:bg-gray-500"
-              }`}
-            >
-              Complete
-            </button>
-            <button
-              className="flex-no-shrink p-2 ml-2 border-2 rounded text-red-500 border-red-500 hover:text-white hover:bg-red-500"
-            >
-              Delete
-            </button>
-          </li>
-        ))}
+      <Container maxWidth='sm' sx={{ mt: 5, display: 'flex', align: "center", flexDirection: 'column' }} >
+        <Typography variant='h3'> Welcome, Fan &#127926; &#127908; &#127911; </Typography>
+        {fan_data.length === 0 ?
+          <div>
+            <Typography variant='h5' sx={{ mt: 3, mb: 3, mr: 3 }}> No Instagram account recorded for this address.
+              Please enter your account below:</Typography>
+            <div className="content-center">
+              <TextField id="outlined-basic" label="ex: @carlasdreams" variant="outlined" />
+              <Button variant='contained' size='large' sx={{ ml: 3 }} endIcon={<SendIcon />}>
+                Send
+              </Button>
+            </div>
+          </div>
+          : "Data exists"}
       </Container>
     </>
   );

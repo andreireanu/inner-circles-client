@@ -2,7 +2,7 @@ import { pxToRem, responsiveFontSizes } from '../utils/getFontValue'
 
 // ----------------------------------------------------------------------
 
-const FONT_PRIMARY = 'Orbitron, Arial, sans-serif' // Google Font
+const FONT_PRIMARY = 'Noto Sans, Arial, sans-serif' // Google Font
 const FONT_SECONDARY = 'Kanit, sans-serif' // Google Font
 
 const typography = {
