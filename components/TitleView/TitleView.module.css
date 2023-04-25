@@ -1,0 +1,16 @@
+.title {
+  display: flex;
+  align-items: center;
+}
+
+.title h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin: 1rem;
+}
+
+.line {
+  background-color: #ffffff39;
+  height: 1px;
+  flex-grow: 1;
+}

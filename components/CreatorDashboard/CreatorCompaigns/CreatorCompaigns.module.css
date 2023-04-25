@@ -1,0 +1,11 @@
+.container {
+  position: relative;
+}
+
+.buttonContainer {
+  text-align: right;
+}
+
+.buttonContainer button {
+  font-size: 1.1rem;
+}
