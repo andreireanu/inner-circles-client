@@ -26,6 +26,7 @@
     "bootstrap": "4.6.2",
     "eslint": "8.35.0",
     "eslint-config-next": "13.2.3",
+    "instagrapi": "^5.0.0",
     "keen-slider": "^6.8.5",
     "moment": "2.29.1",
     "mongodb": "^4.8.1",

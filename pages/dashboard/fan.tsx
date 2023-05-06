@@ -2,7 +2,8 @@ import clientPromise from '../../lib/mongodb'
 import { InferGetServerSidePropsType } from 'next'
 import Head from 'next/head';
 import { SetStateAction, useState } from 'react'
-import { addTwitter } from '../../lib/crud'
+import { addInsta, getInstaId } from '../../lib/crud'
+
 
 import SendIcon from '@mui/icons-material/Send';
 import {
@@ -31,6 +32,7 @@ const FanDashboardPage = ({ fan_data }: any) => {
     setTwitterHandle(event.target.value);
   };
 
+
   return (
     <>
       <Head>
@@ -47,8 +49,8 @@ const FanDashboardPage = ({ fan_data }: any) => {
               <TextField id="outlined-basic" label="ex: @carlasdreams" variant="outlined"
                 onChange={handleTwitterHandleInputChange} />
               <Button variant='contained' size='large' sx={{ ml: 3 }} endIcon={<SendIcon />}
-                onClick={() => addTwitter(instaHandle, setFan, address)}>
-                Send
+                onClick={() => getInstaId(instaHandle, setFan, address)}>
+                Register
               </Button>
             </div>
           </div>
