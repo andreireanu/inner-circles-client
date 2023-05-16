@@ -2,8 +2,13 @@ import { Button, Card, CardContent, Typography } from '@mui/material';
 import { Container, Stack } from '@mui/system';
 import Link from 'next/link';
 import Head from 'next/head';
+import { useGetAccount } from '@multiversx/sdk-dapp/hooks';
+
 
 const DashboardPage = () => {
+
+  const { address } = useGetAccount();
+
   return (
     <>
       <Head>
@@ -25,7 +30,7 @@ const DashboardPage = () => {
                 Creator
               </Button>
             </Link>
-            <Link href='/dashboard/fan'>
+              <Link href={`/dashboard/fan?address=${address}`}>
               <Button variant='contained' size='large'>
                 Fan
               </Button>

@@ -1,5 +1,4 @@
 import clientPromise from "../../../../lib/mongodb"
-import { ObjectId } from "bson";
 
 
 export default async (req, res) => {
@@ -16,10 +15,13 @@ export default async (req, res) => {
     switch (method) {
         case 'POST':
             {
-                const { instaHandle } = JSON.parse(req.body);
-                result = await fan_collection.insertOne({
-                    instaHandle: instaHandle,
-                });
+                const { user } = JSON.parse(req.body);
+                result = await fan_collection.insertOne(
+                    {
+                        id: user.id,
+                        username: user.username,
+                        address: user.address
+                    });
                 if (result['acknowledged'] == true) {
                     res.status(200).json("");
                 } else {

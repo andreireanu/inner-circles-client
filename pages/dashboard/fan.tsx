@@ -2,8 +2,8 @@ import clientPromise from '../../lib/mongodb'
 import { InferGetServerSidePropsType } from 'next'
 import Head from 'next/head';
 import { SetStateAction, useState } from 'react'
-import { addInsta, getInstaId } from '../../lib/crud'
-
+import { enrollUser } from '../../lib/crud'
+import { IgApiClient } from '../../node_modules/instagram-private-api';
 
 import SendIcon from '@mui/icons-material/Send';
 import {
@@ -17,16 +17,15 @@ import {
   TextField,
   Typography
 } from '@mui/material';
+import { blue } from '@mui/material/colors';
 
-import { useGetAccount } from '@multiversx/sdk-dapp/hooks';
 import { useRouter } from 'next/router';
 import { NotAuthRedirectWrapper } from '../../components/NotAuthRedirectWrapper';
 
-const FanDashboardPage = ({ fan_data }: any) => {
+const FanDashboardPage = ({ data, env }: any) => {
 
-  const [fan, setFan] = useState(fan_data || [])
+  const [fan, setFan] = useState(data.fan_data || [])
   const [instaHandle, setTwitterHandle] = useState('');
-  const { address } = useGetAccount();
 
   const handleTwitterHandleInputChange = (event: { target: { value: SetStateAction<string>; }; }) => {
     setTwitterHandle(event.target.value);
@@ -44,53 +43,95 @@ const FanDashboardPage = ({ fan_data }: any) => {
         {fan.length === 0 ?
           <div>
             <Typography variant='h5' sx={{ mt: 3, mb: 3, mr: 3 }}> No Instagram account recorded for this address.
-              Please enter your account below:</Typography>
+              Please enter your account below:
+            </Typography>
             <div className="content-center">
               <TextField id="outlined-basic" label="ex: @carlasdreams" variant="outlined"
                 onChange={handleTwitterHandleInputChange} />
               <Button variant='contained' size='large' sx={{ ml: 3 }} endIcon={<SendIcon />}
-                onClick={() => getInstaId(instaHandle, setFan, address)}>
+                onClick={() => enrollUser(instaHandle, setFan, env)}>
                 Register
               </Button>
             </div>
           </div>
-          : "Data exists"}
+          : <div>
+            <Typography variant='h4' sx={{ mt: 3, mb: 3, mr: 3 }}> Congratulations! Address <span style={{ color: blue[500] }}>{env.address} </span>is registered with the following Instagram user: &nbsp;
+              <span style={{ color: blue[500] }}> {fan['username']} </span>
+            </Typography>
+
+          </div>}
       </Container>
     </>
   );
 };
 
 export async function getServerSideProps(context: any) {
+
+  const address = context['query']['address']
+
   try {
-    // await clientPromise
-    // `await clientPromise` will use the default database passed in the MONGODB_URI
-    // However you can use another database (e.g. myDatabase) by replacing the `await clientPromise` with the following code:
-    //
+
+    // GET MONGO DB DATA
     const client = await clientPromise
     const db = client.db(process.env.MONGODB_DB)
-    const fan_collection = db.collection(process.env.MONGODB_FAN!)
-    const fan_data = await fan_collection.find({}).toArray()
-    //
-    // Then you can execute queries against your database like so:
-    // db.find({}) or any of the MongoDB Node Driver commands
-    console.log(fan_data)
+    const fan_collection = db.collection(process.env.MONGODB_FAN as string)
+    const fan_data = await fan_collection.find({ address: address }).toArray()
+
+    // GET INSTAGRAM SESSION ID
+    let sessionid = null;
+    /*
+    await (async () => {
+      const ig = new IgApiClient();
+      ig.state.generateDevice(process.env.INSTA_USER as string);
+
+      ig.request.end$.subscribe(async () => {
+        const serialized = await ig.state.serialize();
+        const data = serialized['cookies'];
+        const cookies = JSON.parse(data).cookies;
+        cookies.forEach((cookie: any) => {
+          if (cookie.key === 'sessionid') {
+            sessionid = cookie.value;
+            console.log(sessionid)
+          }
+        });
+      });
+      await ig.account.login(process.env.INSTA_USER as string, process.env.INSTA_PASSWORD as string);
+    })();
+      */
+
     return {
-      props: { isConnected: true, fan_data: JSON.parse(JSON.stringify(fan_data)) },
+      props: {
+        connection: {
+          isDbConnected: true,
+        },
+        data: {
+          fan_data: fan_data[0] ? JSON.parse(JSON.stringify(fan_data[0])) : "",
+        },
+        env: {
+          INSTA_URL: process.env.INSTA_URL,
+          sessionid: sessionid,
+          address: address
+        },
+      },
     }
   } catch (e) {
     console.error(e)
     return {
-      props: { isConnected: false },
+      props: {
+        connection: {
+          isDbConnected: false,
+        }
+      }
     }
   }
 }
 
 export default function FanDashboard({
-  fan_data
+  data, env
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <NotAuthRedirectWrapper>
-      <FanDashboardPage fan_data={fan_data} />
+      <FanDashboardPage data={data} env={env} />
     </NotAuthRedirectWrapper>
   );
 }
