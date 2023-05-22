@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import CreateExpModal from '../../CreateExpModal';
 import TitleView from '../../TitleView';
-import CreatorCompaigns from '../CreatorCompaigns';
 
 import {
   Address,
@@ -84,7 +83,6 @@ const EditCreator = ({ creator }: any) => {
         </CardContent>
       </Card>
       <TitleView className={s.title}>My Compaigns</TitleView>
-      <CreatorCompaigns />
       <TitleView className={s.title}>My Experiences</TitleView>
 
       <Button

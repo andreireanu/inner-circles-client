@@ -25,7 +25,7 @@ const DashboardPage = () => {
             justifyContent='center'
             sx={{ mt: 3 }}
           >
-            <Link href='/dashboard/creator'>
+              <Link href={`/dashboard/creator?address=${address}`}>
               <Button variant='contained' size='large'>
                 Creator
               </Button>

@@ -1,33 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
+import { InferGetServerSidePropsType } from 'next'
 
 import {
   useGetCreatorToken
 } from '../../utils/useGetCreatorToken';
 
-
 import { SetUpCreator, EditCreator } from '../../components/CreatorDashboard';
 import { NotAuthRedirectWrapper } from '../../components/NotAuthRedirectWrapper';
-
-import { Button, Stack } from '@mui/material';
-
 import { useForm } from 'react-hook-form';
 
-const CreatorDashboardPage = () => {
+
+export async function getServerSideProps(context: any) {
+  const address = context['query']['address']
+  return {
+    props: {
+      data: {
+        address: address,
+      },
+    },
+  }
+}
+
+const CreatorDashboardPage = ({ data }: any) => {
   const [creator, setCreator] = useState(null);
-
-  const methods = useForm();
-  const { handleSubmit } = methods;
-
-  const creatorToken = useGetCreatorToken();
-
-  const onSubmit = async (data: any) => {
-
-    console.log("Pressed");
-    console.log(creatorToken);
-    console.log("Worked");
-
-  };
+  const address = data.address;
+  const creatorToken = useGetCreatorToken({ address });
+  console.log(creatorToken);
 
   return (
     <>
@@ -37,20 +36,6 @@ const CreatorDashboardPage = () => {
       </Head>
       <main className='mt-5 position-relative'>
         <div className='home d-flex flex-fill flex-column align-items-center justify-content-center'>
-          {<Button
-            variant='contained'
-            sx={{
-              width: '100%',
-              marginTop: '1rem',
-              padding: '1rem'
-            }}
-            onClick={handleSubmit(onSubmit)}
-            className='w-full'
-          >
-            Get from SC
-          </Button>}
-
-
           {creator ? (
             <EditCreator creator={creator} />
           ) : (
@@ -62,10 +47,12 @@ const CreatorDashboardPage = () => {
   );
 };
 
-export default function CreatorDashboard() {
+export default function CreatorDashboard({
+  data
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <NotAuthRedirectWrapper>
-      <CreatorDashboardPage />
+      <CreatorDashboardPage data={data} />
     </NotAuthRedirectWrapper>
   );
 }
