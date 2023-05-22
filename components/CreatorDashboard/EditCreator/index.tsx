@@ -21,7 +21,7 @@ import {
 import { useGetAccount, useGetNetworkConfig } from '@multiversx/sdk-dapp/hooks';
 import { ProxyNetworkProvider } from '@multiversx/sdk-network-providers/out';
 import { onAllowMe, onCreateNFT } from '../../../utils/contractUtils';
-import { smartContract } from '../../Dahsboard/Actions/helpers/smartContract';
+import { smartContract } from '../../Dashboard/Actions/helpers/smartContractOLD';
 import s from './EditCreator.module.css';
 
 const resultsParser = new ResultsParser();

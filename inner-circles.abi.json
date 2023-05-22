@@ -1,0 +1,66 @@
+{
+    "buildInfo": {
+        "rustc": {
+            "version": "1.66.0-nightly",
+            "commitHash": "0ca356586fed56002b10920fd21ddf6fb12de797",
+            "commitDate": "2022-10-06",
+            "channel": "Nightly",
+            "short": "rustc 1.66.0-nightly (0ca356586 2022-10-06)"
+        },
+        "contractCrate": {
+            "name": "inner-circles",
+            "version": "0.0.0"
+        },
+        "framework": {
+            "name": "multiversx-sc",
+            "version": "0.40.1"
+        }
+    },
+    "name": "InnerCircles",
+    "constructor": {
+        "inputs": [],
+        "outputs": []
+    },
+    "endpoints": [
+        {
+            "name": "issueFungibleToken",
+            "mutability": "mutable",
+            "payableInTokens": [
+                "EGLD"
+            ],
+            "inputs": [
+                {
+                    "name": "token_display_name",
+                    "type": "bytes"
+                },
+                {
+                    "name": "token_ticker",
+                    "type": "bytes"
+                },
+                {
+                    "name": "initial_supply",
+                    "type": "BigUint"
+                }
+            ],
+            "outputs": []
+        },
+        {
+            "name": "getCreatorToken",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "user",
+                    "type": "Address"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "TokenIdentifier"
+                }
+            ]
+        }
+    ],
+    "events": [],
+    "hasCallback": true,
+    "types": {}
+}

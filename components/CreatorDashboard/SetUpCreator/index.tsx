@@ -3,7 +3,6 @@ import Alert from '@mui/material/Alert';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { issueTokens } from '../../../utils/contractUtils';
-import { setCreatorInLocalStorage } from '../../../utils/localStorage';
 import FormProvider from '../../FormProvider';
 import RHFTextField from '../../RHFTextField';
 
@@ -19,16 +18,10 @@ const SetUpCreator = ({ setCreator }: any) => {
     const sessionId = await issueTokens(
       data.tokenName,
       data.tokenSymbol,
-      100000
+      1000000
     );
 
-    if (sessionId) {
-      // Store un localstorage for mocking
-      setCreatorInLocalStorage(data);
-      setCreator(data);
-    } else {
-      // setError(res?.message || 'An error occured please try again');
-    }
+
   };
 
   return (
@@ -58,13 +51,6 @@ const SetUpCreator = ({ setCreator }: any) => {
                 variant='standard'
                 required
               />
-              <RHFTextField
-                name='email'
-                label='Email'
-                variant='standard'
-                type='email'
-                required
-              />
             </Stack>
             <Stack
               direction='row'
@@ -83,19 +69,6 @@ const SetUpCreator = ({ setCreator }: any) => {
                 label='Token Symbol'
                 variant='standard'
                 required
-              />
-            </Stack>
-            <Stack
-              direction='row'
-              justifyContent={'center'}
-              spacing={1}
-              margin={1}
-            >
-              <RHFTextField name='twitter' label='Twitter' variant='standard' />
-              <RHFTextField
-                name='instagram'
-                label='Instagram'
-                variant='standard'
               />
             </Stack>
             <Button

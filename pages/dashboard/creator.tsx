@@ -2,23 +2,32 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 
 import {
-  deleteCreatorFromLocalStorage,
-  getCreatorFromLocalStorage
-} from '../../utils/localStorage';
+  useGetCreatorToken
+} from '../../utils/useGetCreatorToken';
+
 
 import { SetUpCreator, EditCreator } from '../../components/CreatorDashboard';
 import { NotAuthRedirectWrapper } from '../../components/NotAuthRedirectWrapper';
-import { Button } from 'react-bootstrap';
+
+import { Button, Stack } from '@mui/material';
+
+import { useForm } from 'react-hook-form';
 
 const CreatorDashboardPage = () => {
   const [creator, setCreator] = useState(null);
 
-  useEffect(() => {
-    (async () => {
-      const creatorTmp = await getCreatorFromLocalStorage();
-      setCreator(creatorTmp);
-    })();
-  }, []);
+  const methods = useForm();
+  const { handleSubmit } = methods;
+
+  const creatorToken = useGetCreatorToken();
+
+  const onSubmit = async (data: any) => {
+
+    console.log("Pressed");
+    console.log(creatorToken);
+    console.log("Worked");
+
+  };
 
   return (
     <>
@@ -28,17 +37,20 @@ const CreatorDashboardPage = () => {
       </Head>
       <main className='mt-5 position-relative'>
         <div className='home d-flex flex-fill flex-column align-items-center justify-content-center'>
-          {/* TODO remove box when api is working */}
-          <Button
-            onClick={() => {
-              deleteCreatorFromLocalStorage();
-              setCreator(null);
+          {<Button
+            variant='contained'
+            sx={{
+              width: '100%',
+              marginTop: '1rem',
+              padding: '1rem'
             }}
-            className={'position-absolute'}
-            style={{ top: 0, left: 0 }}
+            onClick={handleSubmit(onSubmit)}
+            className='w-full'
           >
-            Reset Creator
-          </Button>
+            Get from SC
+          </Button>}
+
+
           {creator ? (
             <EditCreator creator={creator} />
           ) : (

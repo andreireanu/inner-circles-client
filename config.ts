@@ -1,5 +1,5 @@
 export const contractAddress =
-  'erd1qqqqqqqqqqqqqpgqsxd5zwqh0cf3azau89sm8r82dn8kx6ps7wpqm76wgy';
+  'erd1qqqqqqqqqqqqqpgqhd04r68jt00420qpzfep5wcy65kmx78c7wpqgts8yh';
 
 export const dAppName = 'Inner Circles Dapp';
 

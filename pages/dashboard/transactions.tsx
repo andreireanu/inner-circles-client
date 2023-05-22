@@ -13,7 +13,7 @@ import { faBan, faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 import { AxiosError } from 'axios';
 
 import { apiTimeout, contractAddress, transactionSize } from '../../config';
-import { DashboardLayout } from '../../components/Dahsboard/DashboardLayout';
+import { DashboardLayout } from '../../components/Dashboard/DashboardLayout';
 import { Loader, PageState, TransactionsTable } from '../../components';
 
 const DashboardPage = () => {

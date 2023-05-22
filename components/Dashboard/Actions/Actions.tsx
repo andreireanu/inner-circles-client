@@ -7,20 +7,20 @@ import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
 import { contractAddress } from '../../../config';
-import { useGetTimeToPong } from './helpers/useGetTimeToPong';
-import { useGetPingAmount } from './helpers/useGetPingAmount';
+import { useGetTimeToPong } from './helpers/useGetTimeToPongOLD';
+import { useGetUserToken } from './helpers/useGetUserTokenOLD';
 import Link from 'next/link';
 
 export const Actions = () => {
   const { hasPendingTransactions } = useGetPendingTransactions();
   const getTimeToPong = useGetTimeToPong();
-  const pingAmount = useGetPingAmount();
+  const pingAmount = useGetUserToken();
 
   const [secondsLeft, setSecondsLeft] = useState<number>();
   const [hasPing, setHasPing] = useState<boolean>();
-  const /*transactionSessionId*/ [, setTransactionSessionId] = useState<
-      string | null
-    >(null);
+  const /*transactionSessionId*/[, setTransactionSessionId] = useState<
+    string | null
+  >(null);
 
   const mount = () => {
     if (secondsLeft) {

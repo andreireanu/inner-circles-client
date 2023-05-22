@@ -8,26 +8,30 @@ export const issueTokens = async (
   tokenSymbol: string,
   supply: number
 ) => {
-  const transaction = {
-    value: 50000000000000000,
-    data: `issueFungibleToken@${toHex(tokenName)}@${toHex(tokenSymbol)}@${toHex(
-      supply.toString()
-    )}`,
-    receiver: contractAddress,
-    gasLimit: '60000000'
-  };
-  await refreshAccount();
 
-  const { sessionId /*, error*/ } = await sendTransactions({
-    transactions: transaction,
-    transactionsDisplayInfo: {
-      processingMessage: 'Processing Transaction',
-      errorMessage: 'An error has occured during transaction',
-      successMessage: 'Transaction successful'
-    },
-    redirectAfterSign: false
-  });
-  return sessionId;
+  // const transaction = {
+  //   value: 50000000000000000,
+  //   data: `issueFungibleToken@${toHex(tokenName)}@${toHex(tokenSymbol)}@${toHex(
+  //     supply.toString()
+  //   )}`,
+  //   receiver: contractAddress,
+  //   gasLimit: '60000000'
+  // };
+  // await refreshAccount();
+
+  // const { sessionId /*, error*/ } = await sendTransactions({
+  //   transactions: transaction,
+  //   transactionsDisplayInfo: {
+  //     processingMessage: 'Processing Transaction',
+  //     errorMessage: 'An error has occured during transaction',
+  //     successMessage: 'Transaction successful'
+  //   },
+  //   redirectAfterSign: false
+  // });
+  // return sessionId;
+
+  console.log("issueTokens");
+  return "sessionID";
 };
 
 // INFO2: This is the function that will be called when the user clicks the "Buy Experience" button

@@ -7,7 +7,7 @@ import {
   ContractFunction,
   ResultsParser
 } from '@multiversx/sdk-core/out';
-import { smartContract } from './smartContract';
+import { smartContract } from './smartContractOLD';
 
 const resultsParser = new ResultsParser();
 

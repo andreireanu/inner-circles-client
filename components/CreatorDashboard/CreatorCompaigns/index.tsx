@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
 import { Button, Card, CardContent, Container, Stack } from '@mui/material';
-import CompaignsSlider from './CompaignsSlider';
+// import CompaignsSlider from './CompaignsSlider';
 import AddIcon from '@mui/icons-material/Add';
-import CreateCompaignModal from './CreateCompaignModal';
-import { getCampaignsFromLocalStorage } from '../../../utils/localStorage';
 
 import s from './CreatorCompaigns.module.css';
 import cn from 'classnames';
@@ -24,8 +22,8 @@ const CreatorCompaigns = ({ creator, className }: any) => {
 
   useEffect(() => {
     (async () => {
-      const campaignsTmp = await getCampaignsFromLocalStorage();
-      if (campaignsTmp) setCampaigns(campaignsTmp);
+      // const campaignsTmp = await getCampaignsFromLocalStorage();
+      // if (campaignsTmp) setCampaigns(campaignsTmp);
     })();
   }, []);
 
