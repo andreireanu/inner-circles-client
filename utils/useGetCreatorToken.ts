@@ -28,9 +28,7 @@ export const useGetCreatorToken = ({ address }: any) => {
         queryResponse,
         endpointDefinition
       );
-
       setCreatorToken(firstValue?.valueOf());
-
     } catch (err) {
       console.error('Unable to call getCreatorToken', err);
     }

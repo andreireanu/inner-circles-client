@@ -8,7 +8,6 @@ import {
 
 import { SetUpCreator, EditCreator } from '../../components/CreatorDashboard';
 import { NotAuthRedirectWrapper } from '../../components/NotAuthRedirectWrapper';
-import { useForm } from 'react-hook-form';
 
 
 export async function getServerSideProps(context: any) {
@@ -24,9 +23,8 @@ export async function getServerSideProps(context: any) {
 
 const CreatorDashboardPage = ({ data }: any) => {
   const [creator, setCreator] = useState(null);
-  const address = data.address;
+  const { address } = data;
   const creatorToken = useGetCreatorToken({ address });
-  console.log(creatorToken);
 
   return (
     <>
@@ -36,10 +34,10 @@ const CreatorDashboardPage = ({ data }: any) => {
       </Head>
       <main className='mt-5 position-relative'>
         <div className='home d-flex flex-fill flex-column align-items-center justify-content-center'>
-          {creator ? (
-            <EditCreator creator={creator} />
-          ) : (
+          {creatorToken !== "" ? (
             <SetUpCreator setCreator={setCreator} />
+          ) : (
+            <EditCreator creator={creator} />
           )}
         </div>
       </main>

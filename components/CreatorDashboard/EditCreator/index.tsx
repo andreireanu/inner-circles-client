@@ -37,32 +37,6 @@ const EditCreator = ({ creator }: any) => {
     return new ProxyNetworkProvider(network);
   }, [network]);
 
-  useEffect(() => {
-    const getFromQuery = async () => {
-      try {
-        const query = smartContract.createQuery({
-          func: new ContractFunction('getUserNft'),
-          args: [new AddressValue(new Address(address))]
-        });
-        const queryResponse = await proxy.queryContract(query);
-
-        const endpointDefinition = smartContract.getEndpoint('getUserNft');
-
-        const { firstValue: amount } = resultsParser.parseQueryResponse(
-          queryResponse,
-          endpointDefinition
-        );
-
-        console.log('amount', amount);
-        setExperienceSymbol(amount?.valueOf()?.toString(10));
-      } catch (err) {
-        console.error('Unable to call getUserNft', err);
-      }
-    };
-
-    getFromQuery().catch(console.error);
-  }, [address, proxy]);
-
   const allowMe = () => {
     onAllowMe(experienceSymbol);
   };
@@ -73,12 +47,12 @@ const EditCreator = ({ creator }: any) => {
 
   return (
     <Container className={'text-center'}>
-      <h1>Welcome {creator.name}</h1>
+      <h1>Welcome, Creator  &#127911; &#127926; &#127908;</h1>
       <Card sx={{ mt: 2, display: 'inline-block' }}>
         <CardContent sx={{ textAlign: 'center' }}>
-          Token Name : {creator.tokenName}
+          Token Name : 
           <br />
-          Token Symbol : {creator.tokenSymbol}
+          Token Symbol : 
           <br />
         </CardContent>
       </Card>

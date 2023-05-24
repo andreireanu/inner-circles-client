@@ -78,7 +78,7 @@ export async function getServerSideProps(context: any) {
     const fan_data = await fan_collection.find({ address: address }).toArray()
 
     // GET INSTAGRAM SESSION ID
-    let sessionid = null;
+    const sessionid = null;
     /*
     await (async () => {
       const ig = new IgApiClient();
