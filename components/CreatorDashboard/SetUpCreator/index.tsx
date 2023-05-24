@@ -1,34 +1,29 @@
 import { Button, Card, CardContent, Container, Stack } from '@mui/material';
 import Alert from '@mui/material/Alert';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { issueToken } from '../../../utils/issueToken';
+import { issueTokens } from '../../../utils/contractUtils';
 import FormProvider from '../../FormProvider';
 import RHFTextField from '../../RHFTextField';
 
 const SetUpCreator = ({ setCreator }: any) => {
   const [error, setError] = useState<string | null>(null);
-  const [name, setName] = useState("");
-  const [tokenName, setTokenName] = useState("");
-  const [tokenSymbol, setTokenSymbol] = useState("");
   const methods = useForm();
 
   const { handleSubmit } = methods;
 
   const onSubmit = async (data: any) => {
     setError(null);
-    console.log("Clicked")
+    console.log(data.tokenName);
+    console.log(data.tokenSymbol);
     // const sessionId = await issueTokens(
     //   data.tokenName,
     //   data.tokenSymbol,
-    //   100000
+    //   1000000
     // );
-    const sessionId = null;
-    if (sessionId) {
-      // Store un localstorage for mocking
-    } else {
-      // setError(res?.message || 'An error occured please try again');
-    }
+
+    console.log("here")
+
   };
 
   return (
@@ -54,11 +49,9 @@ const SetUpCreator = ({ setCreator }: any) => {
             >
               <RHFTextField
                 name='name'
-                label='Creator Name'
+                label='Name'
                 variant='standard'
                 required
-                value={name}
-                // onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
               />
             </Stack>
             <Stack
@@ -72,14 +65,12 @@ const SetUpCreator = ({ setCreator }: any) => {
                 label='Token Name'
                 variant='standard'
                 required
-                // onChange={(e: ChangeEvent<HTMLInputElement>) => setTokenName(e.target.value)}
               />
               <RHFTextField
                 name='tokenSymbol'
                 label='Token Symbol'
                 variant='standard'
                 required
-                // onChange={(e: ChangeEvent<HTMLInputElement>) => setTokenSymbol(e.target.value)}
               />
             </Stack>
             <Button
@@ -89,7 +80,7 @@ const SetUpCreator = ({ setCreator }: any) => {
                 marginTop: '1rem',
                 padding: '1rem'
               }}
-              onClick={() => handleSubmit(onSubmit)}
+              onClick={handleSubmit(onSubmit)}
               className='w-full'
             >
               Create Account
