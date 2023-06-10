@@ -11,7 +11,7 @@ import { NotAuthRedirectWrapper } from '../../components/NotAuthRedirectWrapper'
 
 
 export async function getServerSideProps(context: any) {
-  const address = context['query']['address']
+  const address = context['query']['address'] || ""
   return {
     props: {
       data: {
@@ -24,7 +24,9 @@ export async function getServerSideProps(context: any) {
 const CreatorDashboardPage = ({ data }: any) => {
   const [creator, setCreator] = useState(null);
   const { address } = data;
-  const creatorToken = useGetCreatorToken({ address });
+  console.log(address)
+  const creatorToken = useGetCreatorToken({ address }) || "";
+  console.log(creatorToken)
 
   return (
     <>
@@ -34,8 +36,8 @@ const CreatorDashboardPage = ({ data }: any) => {
       </Head>
       <main className='mt-5 position-relative'>
         <div className='home d-flex flex-fill flex-column align-items-center justify-content-center'>
-          {creatorToken !== "" ? (
-            <SetUpCreator setCreator={setCreator} />
+          {creatorToken == "" ? (
+            <SetUpCreator />
           ) : (
             <EditCreator creator={creator} />
           )}

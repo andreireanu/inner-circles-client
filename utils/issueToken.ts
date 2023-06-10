@@ -1,19 +1,22 @@
 import { sendTransactions } from '@multiversx/sdk-dapp/services';
 import { refreshAccount } from '@multiversx/sdk-dapp/utils';
 import { contractAddress } from '../config';
-import toHex from './toHex';
+import stringToHex from './toHex';
 
 export const issueToken = async (
     tokenName: string,
     tokenSymbol: string,
     supply: number
 ) => {
+    console.log('Here');
+    console.log(supply.toString());
+    console.log(supply.toString(16));
 
     const transaction = {
+
         value: 50000000000000000,
-        data: `issueFungibleToken@${toHex(tokenName)}@${toHex(tokenSymbol)}@${toHex(
-            supply.toString()
-        )}`,
+        data: `issueFungibleToken@${stringToHex(tokenName)}@${stringToHex(tokenSymbol)}@${supply.toString(16)
+            }`,
         receiver: contractAddress,
         gasLimit: '60000000'
     };

@@ -3,32 +3,32 @@ import { refreshAccount } from '@multiversx/sdk-dapp/utils';
 import { contractAddress } from '../config';
 
 // INFO1: This is the function that will be called when the user clicks the "Create Account" button
-export const issueTokens = async (
+export const issueToken = async (
   tokenName: string,
   tokenSymbol: string,
   supply: number
 ) => {
 
-  // const transaction = {
-  //   value: 50000000000000000,
-  //   data: `issueFungibleToken@${toHex(tokenName)}@${toHex(tokenSymbol)}@${toHex(
-  //     supply.toString()
-  //   )}`,
-  //   receiver: contractAddress,
-  //   gasLimit: '60000000'
-  // };
-  // await refreshAccount();
+  const transaction = {
+    value: 50000000000000000,
+    data: `issueFungibleToken@${toHex(tokenName)}@${toHex(tokenSymbol)}@${toHex(
+      supply.toString()
+    )}`,
+    receiver: contractAddress,
+    gasLimit: '60000000'
+  };
+  await refreshAccount();
 
-  // const { sessionId /*, error*/ } = await sendTransactions({
-  //   transactions: transaction,
-  //   transactionsDisplayInfo: {
-  //     processingMessage: 'Processing Transaction',
-  //     errorMessage: 'An error has occured during transaction',
-  //     successMessage: 'Transaction successful'
-  //   },
-  //   redirectAfterSign: false
-  // });
-  // return sessionId;
+  const { sessionId /*, error*/ } = await sendTransactions({
+    transactions: transaction,
+    transactionsDisplayInfo: {
+      processingMessage: 'Processing Transaction',
+      errorMessage: 'An error has occured during transaction',
+      successMessage: 'Transaction successful'
+    },
+    redirectAfterSign: false
+  });
+  return sessionId;
 
   console.log("issueTokens");
   return "sessionID";

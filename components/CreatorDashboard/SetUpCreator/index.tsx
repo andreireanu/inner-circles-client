@@ -2,7 +2,7 @@ import { Button, Card, CardContent, Container, Stack } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { issueTokens } from '../../../utils/contractUtils';
+import { issueToken } from '../../../utils/issueToken';
 import FormProvider from '../../FormProvider';
 import RHFTextField from '../../RHFTextField';
 
@@ -14,15 +14,16 @@ const SetUpCreator = ({ setCreator }: any) => {
 
   const onSubmit = async (data: any) => {
     setError(null);
+    console.log(data.name);
     console.log(data.tokenName);
     console.log(data.tokenSymbol);
-    // const sessionId = await issueTokens(
-    //   data.tokenName,
-    //   data.tokenSymbol,
-    //   1000000
-    // );
+    const sessionId = await issueToken(
+      data.tokenName,
+      data.tokenSymbol,
+      1000000
+    );
 
-    console.log("here")
+    // console.log(sessionId)
 
   };
 
@@ -49,7 +50,7 @@ const SetUpCreator = ({ setCreator }: any) => {
             >
               <RHFTextField
                 name='name'
-                label='Name'
+                label='Creator Name'
                 variant='standard'
                 required
               />
