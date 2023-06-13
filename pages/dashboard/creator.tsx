@@ -24,9 +24,7 @@ export async function getServerSideProps(context: any) {
 const CreatorDashboardPage = ({ data }: any) => {
   const [creator, setCreator] = useState(null);
   const { address } = data;
-  console.log(address)
   const creatorToken = useGetCreatorToken({ address }) || "";
-  console.log(creatorToken)
 
   return (
     <>
@@ -39,7 +37,7 @@ const CreatorDashboardPage = ({ data }: any) => {
           {creatorToken == "" ? (
             <SetUpCreator />
           ) : (
-            <EditCreator creator={creator} />
+              <EditCreator creatorToken={creatorToken} />
           )}
         </div>
       </main>

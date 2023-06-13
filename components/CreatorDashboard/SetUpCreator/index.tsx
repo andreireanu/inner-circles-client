@@ -14,16 +14,12 @@ const SetUpCreator = ({ setCreator }: any) => {
 
   const onSubmit = async (data: any) => {
     setError(null);
-    console.log(data.name);
-    console.log(data.tokenName);
-    console.log(data.tokenSymbol);
     const sessionId = await issueToken(
       data.tokenName,
       data.tokenSymbol,
       1000000
     );
 
-    // console.log(sessionId)
 
   };
 
