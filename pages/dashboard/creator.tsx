@@ -37,7 +37,7 @@ const CreatorDashboardPage = ({ data }: any) => {
           {creatorToken == "" ? (
             <SetUpCreator />
           ) : (
-              <EditCreator creatorToken={creatorToken} />
+              <EditCreator creatorToken={creatorToken} address={address} />
           )}
         </div>
       </main>

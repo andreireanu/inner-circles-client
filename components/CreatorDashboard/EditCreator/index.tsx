@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-
 import AddIcon from '@mui/icons-material/Add';
 import {
   Button,
@@ -10,6 +9,11 @@ import {
 } from '@mui/material';
 import CreateExpModal from '../../CreateExpModal';
 import TitleView from '../../TitleView';
+import CreatorCompaigns from '../CreatorCompaigns';
+
+import {
+  decodeBase64,
+} from "@multiversx/sdk-dapp/utils";
 
 import {
   Address,
@@ -22,13 +26,19 @@ import { ProxyNetworkProvider } from '@multiversx/sdk-network-providers/out';
 import { onAllowMe, onCreateNFT } from '../../../utils/contractUtils';
 import { smartContract } from '../../Dashboard/Actions/helpers/smartContractOLD';
 import s from './EditCreator.module.css';
-import { API_URL } from '../../../config';
+import { API_URL, QUERY_URL } from '../../../config';
+import { contractAddress } from '../../../config';
 
-const EditCreator = ({ creatorToken }: any) => {
 
+
+
+const EditCreator = ({ creatorToken, address }: any) => {
+
+  // SET TOKEN DATA
   const [name, setName] = useState('');
   const [token, setToken] = useState('');
   const [supply, setSupply] = useState('');
+
   const tokenDataUrl = API_URL + '/tokens/' + creatorToken;
   useEffect(() => {
     fetch(tokenDataUrl)
@@ -43,6 +53,32 @@ const EditCreator = ({ creatorToken }: any) => {
       });
   }, []);
 
+  // SET NFT DATA
+  const [nft, setNft] = useState('');
+  const addressFromBech = Address.fromBech32(address).hex();
+  console.log(addressFromBech);
+  useEffect(() => {
+    fetch(QUERY_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        scAddress: contractAddress,
+        funcName: 'getCreatorSft',
+        args: [addressFromBech],
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        let nftBase64 = data.data.data.returnData[0];
+        setNft(decodeBase64(nftBase64))
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }, []);
 
   return (
     <Container className={'text-center'}>
@@ -55,10 +91,15 @@ const EditCreator = ({ creatorToken }: any) => {
           <br />
           Supply : {supply}
           <br />
+          {nft == "" ? (
+            <span> Not Issued </span>
+          ) : (
+            <span> Token Symbol: {nft} </span>
+          )} 
         </CardContent>
       </Card>
       <TitleView className={s.title}>My Compaigns</TitleView>
-      <TitleView className={s.title}>My Experiences</TitleView>
+      <CreatorCompaigns />
 
     </Container>
   );

@@ -10,6 +10,7 @@ export const apiTimeout = 6000;
 export const transactionSize = 15;
 export const TOOLS_API_URL = 'https://tools.elrond.com';
 export const API_URL = 'https://devnet-api.multiversx.com';
+export const QUERY_URL = 'https://devnet-api.multiversx.com/vm-values/query'
 /**
  * Calls to these domains will use `nativeAuth` Baerer token
  */
