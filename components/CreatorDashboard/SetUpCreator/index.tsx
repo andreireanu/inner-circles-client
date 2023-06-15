@@ -19,8 +19,6 @@ const SetUpCreator = ({ setCreator }: any) => {
       data.tokenSymbol,
       1000000
     );
-
-
   };
 
   return (

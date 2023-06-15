@@ -28,11 +28,15 @@ import { smartContract } from '../../Dashboard/Actions/helpers/smartContractOLD'
 import s from './EditCreator.module.css';
 import { API_URL, QUERY_URL } from '../../../config';
 import { contractAddress } from '../../../config';
-
+import { issueNonFungibleToken } from '../../../utils/issueNonFungibleToken';
+import { useForm } from 'react-hook-form';
 
 
 
 const EditCreator = ({ creatorToken, address }: any) => {
+
+  const methods = useForm();
+  const { handleSubmit } = methods;
 
   // SET TOKEN DATA
   const [name, setName] = useState('');
@@ -56,7 +60,6 @@ const EditCreator = ({ creatorToken, address }: any) => {
   // SET NFT DATA
   const [nft, setNft] = useState('');
   const addressFromBech = Address.fromBech32(address).hex();
-  console.log(addressFromBech);
   useEffect(() => {
     fetch(QUERY_URL, {
       method: 'POST',
@@ -65,7 +68,7 @@ const EditCreator = ({ creatorToken, address }: any) => {
       },
       body: JSON.stringify({
         scAddress: contractAddress,
-        funcName: 'getCreatorSft',
+        funcName: 'getCreatorNft',
         args: [addressFromBech],
       })
     })
@@ -80,24 +83,44 @@ const EditCreator = ({ creatorToken, address }: any) => {
       });
   }, []);
 
+  // Issue NFT
+  const onSubmit = async (data: any) => {
+
+    const sessionId = await issueNonFungibleToken(
+      name,
+      token.split("-")[0],
+    );
+  };
+
+
   return (
-    <Container className={'text-center'}>
+    <Container className={'text-center'} >
       <h1>Welcome, Creator  &#127911; &#127926; &#127908;</h1>
       <Card sx={{ mt: 2, display: 'inline-block' }}>
         <CardContent sx={{ textAlign: 'center' }}>
-          Token Name : {name}
+          Funginble Token Name : {name}
           <br />
-          Token Symbol : {token}
+          Fungible Token Symbol : {token}
           <br />
           Supply : {supply}
           <br />
-          {nft == "" ? (
-            <span> Not Issued </span>
+          {nft == "" && name != "" ? (
+            <span>
+              <Button fullWidth size='large' type='submit' variant='contained' sx={{ mt: 2 }} onClick={handleSubmit(onSubmit)} >
+                Please Click here to issue <br /> The Non Fungible Token
+              </Button>
+            </span>
           ) : (
-            <span> Token Symbol: {nft} </span>
-          )} 
+            <span>Non Fungible Token Symbol : {nft}</span>
+          )}
+
+
         </CardContent>
       </Card>
+
+
+
+
       <TitleView className={s.title}>My Compaigns</TitleView>
       <CreatorCompaigns />
 
