@@ -24,7 +24,7 @@ const CreatorCompaigns = ({ creator, className }: any) => {
           onClick={() => setOpenModal(true)}
           startIcon={<AddIcon />}
         >
-          Create new compaign
+          Create new campaign
         </Button>
         <CreateCompaignModal
           open={openModal}

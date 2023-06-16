@@ -157,6 +157,9 @@ const EditCreator = ({ creatorToken, address }: any) => {
             Campaign Name: {campaignName} <br />
             Hashtag: {campaignHashtag} <br />
             Amount allocated: {campaignAmount} <br />
+              <Button sx={{ mt: 2, display: 'inline-block' }} fullWidth size='small' type='submit' variant='contained'>
+                Finish Campaign
+              </Button>
           </CardContent>
         </Card>
       )}
