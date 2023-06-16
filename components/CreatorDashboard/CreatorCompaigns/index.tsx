@@ -8,18 +8,11 @@ import CreateCompaignModal from './CreateCompaignModal';
 import s from './CreatorCompaigns.module.css';
 import cn from 'classnames';
 
-const mock = [
-  'campaign1',
-  'campaign2',
-  'campaign3',
-  'campaign4',
-  'campaign5',
-  'campaign6'
-];
+
 
 const CreatorCompaigns = ({ creator, className }: any) => {
   const [openModal, setOpenModal] = useState(false);
-  const [campaigns, setCampaigns] = useState([]);
+  const [campaigns, setCompaigns] = useState([]);
 
 
 
@@ -37,7 +30,7 @@ const CreatorCompaigns = ({ creator, className }: any) => {
           open={openModal}
           handleClose={() => setOpenModal(false)}
           campaigns={campaigns}
-          setCampaigns={setCampaigns}
+          setCompaigns={setCompaigns}
         />
       </div>
       <CompaignsSlider className={s.compaignsSlider} compaigns={campaigns} />

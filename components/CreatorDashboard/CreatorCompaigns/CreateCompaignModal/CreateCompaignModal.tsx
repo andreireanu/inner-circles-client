@@ -33,36 +33,18 @@ export interface CreateCompaignModalProps {
   className?: string;
   open: boolean;
   handleClose: () => void;
-  setCampaigns: SetStateAction<any>;
+  setCompaigns: SetStateAction<any>;
   campaigns: Array<any>;
 }
 
-const optionsPlatform = [
-  'twitter',
-  'facebook',
-  'instagram',
-  'youtube',
-  'twitch',
-  'tiktok'
-];
 
-const platformActions: {
-  [key: string]: Array<string>;
-} = {
-  twitter: ['like', 'retweet', 'comment'],
-  facebook: ['like', 'share', 'comment'],
-  instagram: ['like', 'comment'],
-  youtube: ['like', 'share'],
-  twitch: ['like', 'share'],
-  tiktok: ['like', 'share']
-};
 
 const CreateCompaignModal: FC<CreateCompaignModalProps> = ({
   className,
   handleClose,
   open,
   campaigns,
-  setCampaigns
+  setCompaigns
 }) => {
   const methods = useForm();
   const [error, setError] = useState<string | null>(null);
@@ -78,9 +60,9 @@ const CreateCompaignModal: FC<CreateCompaignModalProps> = ({
     const res = MockCreateCampaign({ ...data, platform });
     if (res.succeed) {
       // Store un localstorage for mocking
-      const newCampaigns = campaigns;
-      newCampaigns.push({ ...data, platform });
-      setCampaigns(newCampaigns);
+      const newCompaigns = campaigns;
+      newCompaigns.push({ ...data, platform });
+      setCompaigns(newCompaigns);
       handleClose();
     } else {
       setError(res?.message || 'An error occured please try again');
@@ -103,54 +85,19 @@ const CreateCompaignModal: FC<CreateCompaignModalProps> = ({
               <FormProvider methods={methods}>
                 <RHFTextField
                   name='name'
-                  label='Name of the campaign'
+                  label='Campaign name'
                   variant='standard'
                   required
                 />
-                <FormControl fullWidth sx={{ mt: 3, mb: 2 }}>
-                  <InputLabel id='demo-simple-select-label'>
-                    Choose your platform
-                  </InputLabel>
-                  <Select
-                    labelId='demo-simple-select-label'
-                    id='demo-simple-select'
-                    value={platform}
-                    label='Age'
-                    sx={{ width: '100%' }}
-                    onChange={(e: SelectChangeEvent) =>
-                      setPlatform(e.target.value as string)
-                    }
-                  >
-                    {optionsPlatform.map((opt) => (
-                      <MenuItem key={`key-${opt}`} value={opt}>
-                        {opt}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <Box>
-                  <InputLabel id='demo-simple-select-label'>
-                    Choose the rewarding actions:
-                  </InputLabel>
-                  <FormGroup sx={{ display: 'flex', flexDirection: 'row' }}>
-                    {platformActions[platform]?.map((action, i) => (
-                      <FormControlLabel
-                        key={`platform-action-${i}`}
-                        control={<Checkbox />}
-                        label={action}
-                      />
-                    ))}
-                  </FormGroup>
-                </Box>
                 <RHFTextField
                   name='compaignLink'
-                  label='Link of the campaign'
+                  label='Campaign hashtag'
                   variant='standard'
                   required
                 />
                 <RHFTextField
                   name='tokenQuantity'
-                  label='Choose the amount of token allocated'
+                  label='Allocated tokens'
                   variant='standard'
                   required
                 />

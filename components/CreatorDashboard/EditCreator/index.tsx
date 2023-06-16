@@ -23,13 +23,13 @@ import {
 } from '@multiversx/sdk-core/out';
 import { useGetAccount, useGetNetworkConfig } from '@multiversx/sdk-dapp/hooks';
 import { ProxyNetworkProvider } from '@multiversx/sdk-network-providers/out';
-import { onAllowMe, onCreateNFT } from '../../../utils/contractUtils';
 import { smartContract } from '../../Dashboard/Actions/helpers/smartContractOLD';
 import s from './EditCreator.module.css';
 import { API_URL, QUERY_URL } from '../../../config';
 import { contractAddress } from '../../../config';
 import { issueNonFungibleToken } from '../../../utils/issueNonFungibleToken';
 import { useForm } from 'react-hook-form';
+import { hex2a } from '../../../utils/hexUtils';
 
 
 
@@ -74,7 +74,6 @@ const EditCreator = ({ creatorToken, address }: any) => {
     })
       .then(response => response.json())
       .then(data => {
-        console.log(data);
         let nftBase64 = data.data.data.returnData[0];
         setNft(decodeBase64(nftBase64))
       })
@@ -85,25 +84,55 @@ const EditCreator = ({ creatorToken, address }: any) => {
 
   // Issue NFT
   const onSubmit = async (data: any) => {
-
     const sessionId = await issueNonFungibleToken(
       name,
       token.split("-")[0],
     );
   };
 
+  // Get campaigns
+  const [campaignName, setCampaignName] = useState('');
+  const [campaignHashtag, setCampaignHashtag] = useState('');
+  const [campaignAmount, setCampaignAmount] = useState(0);
+  useEffect(() => {
+    fetch(QUERY_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        scAddress: contractAddress,
+        funcName: 'getCampaigns',
+        args: [addressFromBech],
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        let cmp = data.data.data.returnData[0];
+        const hexCampaign = Buffer.from(cmp, 'base64').toString('hex');
+        let regexConst = new RegExp(/0000000(?!0)./g);
+        let hexCampaignSplit = hexCampaign.replaceAll(regexConst, ',').split(',');
+        console.log(hexCampaignSplit)
+        setCampaignName(hex2a(hexCampaignSplit[1]))
+        setCampaignHashtag("#" + hex2a(hexCampaignSplit[2]).toLowerCase())
+        setCampaignAmount(parseInt(hexCampaignSplit[3], 16))
+        console.log(campaignName);
+        console.log(campaignHashtag);
+        console.log(campaignAmount);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }, []);
 
   return (
     <Container className={'text-center'} >
       <h1>Welcome, Creator  &#127911; &#127926; &#127908;</h1>
       <Card sx={{ mt: 2, display: 'inline-block' }}>
         <CardContent sx={{ textAlign: 'center' }}>
-          Funginble Token Name : {name}
-          <br />
-          Fungible Token Symbol : {token}
-          <br />
-          Supply : {supply}
-          <br />
+          Funginble Token Name : {name}  <br />
+          Fungible Token Symbol : {token} <br />
+          Supply : {supply} <br />
           {nft == "" && name != "" ? (
             <span>
               <Button fullWidth size='large' type='submit' variant='contained' sx={{ mt: 2 }} onClick={handleSubmit(onSubmit)} >
@@ -113,15 +142,24 @@ const EditCreator = ({ creatorToken, address }: any) => {
           ) : (
             <span>Non Fungible Token Symbol : {nft}</span>
           )}
-
-
         </CardContent>
       </Card>
-
-
-
-
-      <TitleView className={s.title}>My Compaigns</TitleView>
+      <TitleView className={s.title}>My Campaigns</TitleView>
+      {campaignName == "" ? (
+        <Card sx={{ mt: 2, display: 'inline-block' }}>
+          <CardContent sx={{ textAlign: 'center' }}>
+            No Campaign
+          </CardContent>
+        </Card>
+      ) : (
+        <Card sx={{ mt: 2, display: 'inline-block' }}>
+          <CardContent sx={{ textAlign: 'center' }}>
+            Campaign Name: {campaignName} <br />
+            Hashtag: {campaignHashtag} <br />
+            Amount allocated: {campaignAmount} <br />
+          </CardContent>
+        </Card>
+      )}
       <CreatorCompaigns />
 
     </Container>

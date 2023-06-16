@@ -1,7 +1,7 @@
 import { sendTransactions } from '@multiversx/sdk-dapp/services';
 import { refreshAccount } from '@multiversx/sdk-dapp/utils';
 import { contractAddress } from '../config';
-import { stringToHex, numberToHex } from './toHex';
+import { stringToHex, numberToHex } from './hexUtils';
 
 export const issueToken = async (
     tokenName: string,

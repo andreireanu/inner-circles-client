@@ -1,7 +1,6 @@
 import { Button, Dialog, DialogContent, DialogTitle } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useForm } from 'react-hook-form';
-import { generateNFT } from '../utils/contractUtils';
 import FormProvider from './FormProvider';
 import RHFTextField from './RHFTextField';
 
@@ -11,9 +10,7 @@ const CreateExpModal = ({ handleClose }: any) => {
   const { handleSubmit } = methods;
 
   const onSubmit = async (data: any) => {
-    const sessionId = await generateNFT(data.name, data.symbol);
 
-    console.log(sessionId);
   };
 
   return (
