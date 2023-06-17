@@ -22,12 +22,11 @@ import {
 
 import FormProvider from '../../../FormProvider';
 import RHFTextField from '../../../RHFTextField';
-import MockCreateCampaign from './MockCreateCampaign';
 
 import { useForm } from 'react-hook-form';
-
-import cn from 'classnames';
 import s from './CreateCampaignModal.module.css';
+
+import { createCampaign } from '../../../../utils/createCampaign';
 
 export interface CreateCampaignModalProps {
   className?: string;
@@ -37,36 +36,23 @@ export interface CreateCampaignModalProps {
   campaigns: Array<any>;
 }
 
-
-
 const CreateCampaignModal: FC<CreateCampaignModalProps> = ({
-  className,
   handleClose,
   open,
-  campaigns,
-  setCampaigns
 }) => {
   const methods = useForm();
   const [error, setError] = useState<string | null>(null);
-  const [name, setName] = useState('');
-  const [platform, setPlatform] = useState<string>('');
   // const [name, setName] = useState('');
 
   const { handleSubmit } = methods;
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     setError(null);
-    console.log({ ...data, platform });
-    const res = MockCreateCampaign({ ...data, platform });
-    if (res.succeed) {
-      // Store un localstorage for mocking
-      const newCampaigns = campaigns;
-      newCampaigns.push({ ...data, platform });
-      setCampaigns(newCampaigns);
-      handleClose();
-    } else {
-      setError(res?.message || 'An error occured please try again');
-    }
+    console.log(data);
+    console.log(data.name);
+    console.log(data.campaignHashtag);
+    console.log(Number(data.tokenQuantity));
+    createCampaign(data.name, data.campaignHashtag, data.tokenQuantity); 
   };
 
   return (
@@ -90,7 +76,7 @@ const CreateCampaignModal: FC<CreateCampaignModalProps> = ({
                   required
                 />
                 <RHFTextField
-                  name='compaignLink'
+                  name='campaignHashtag'
                   label='Campaign hashtag'
                   variant='standard'
                   required

@@ -34,7 +34,7 @@ const CreatorDashboardPage = ({ data }: any) => {
       </Head>
       <main className='mt-5 position-relative'>
         <div className='home d-flex flex-fill flex-column align-items-center justify-content-center'>
-          {creatorToken == "" ? (
+          {creatorToken === "" ? (
             <SetUpCreator />
           ) : (
               <EditCreator creatorToken={creatorToken} address={address} />

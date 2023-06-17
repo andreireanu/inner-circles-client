@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
+import Link from 'next/link';
 import {
   Button,
   Card,
@@ -30,8 +31,6 @@ import { contractAddress } from '../../../config';
 import { issueNonFungibleToken } from '../../../utils/issueNonFungibleToken';
 import { useForm } from 'react-hook-form';
 import { hex2a } from '../../../utils/hexUtils';
-import { CampaignDashboard } from '../../../components/CreatorDashboard';
-
 
 const EditCreator = ({ creatorToken, address }: any) => {
 
@@ -149,25 +148,21 @@ const EditCreator = ({ creatorToken, address }: any) => {
       <TitleView className={s.title}>My Campaigns</TitleView>
       <CreatorCampaigns />
       {campaignName == "" ? (
-        <Card sx={{ mt: 2, display: 'inline-block' }}>
-          <CardContent sx={{ textAlign: 'center' }}>
-            No Campaign
-          </CardContent>
-        </Card>
+        <span />     
       ) : (
           <Card sx={{ mt: 2, display: 'inline-block', width: '75%' }}>
           <CardContent sx={{ textAlign: 'center' }}>
             Campaign Name: {campaignName} <br />
             Hashtag: {campaignHashtag} <br />
             Amount allocated: {campaignAmount} <br />
-              <Button
-                onClick={handleButtonClick}
+              <Link href={`/dashboard/campaign?address=${address}&hashtag=${campaignHashtag.substring(1)}`}  >
+                <Button
                 sx={{ mt: 2, display: 'inline-block', width: '25%' }}
                 fullWidth size='small' type='submit' variant='contained' >
                 Campaign status
               </Button>
-          </CardContent>
-            {showDashboard && <CampaignDashboard />}
+              </Link>
+            </CardContent>
         </Card>
       )}
     </Container>

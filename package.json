@@ -39,6 +39,7 @@
     "react-bootstrap": "2.1.2",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.43.5",
+    "react-router-dom": "^6.13.0",
     "sass": "1.57.1",
     "swiper": "^9.1.0",
     "tls": "^0.0.1",

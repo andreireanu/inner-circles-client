@@ -6,8 +6,8 @@ export function stringToHex(str: string) {
     return result;
 }
 
-export function numberToHex(nr: number) {
-    let result = nr.toString(16);
+export function numberToHex(nr: any) {
+    let result = parseInt(nr).toString(16);
     if (result.length % 2 == 1) {
         result = '0' + result;
     }
