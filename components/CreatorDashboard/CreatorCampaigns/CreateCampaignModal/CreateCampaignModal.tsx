@@ -27,24 +27,24 @@ import MockCreateCampaign from './MockCreateCampaign';
 import { useForm } from 'react-hook-form';
 
 import cn from 'classnames';
-import s from './CreateCompaignModal.module.css';
+import s from './CreateCampaignModal.module.css';
 
-export interface CreateCompaignModalProps {
+export interface CreateCampaignModalProps {
   className?: string;
   open: boolean;
   handleClose: () => void;
-  setCompaigns: SetStateAction<any>;
+  setCampaigns: SetStateAction<any>;
   campaigns: Array<any>;
 }
 
 
 
-const CreateCompaignModal: FC<CreateCompaignModalProps> = ({
+const CreateCampaignModal: FC<CreateCampaignModalProps> = ({
   className,
   handleClose,
   open,
   campaigns,
-  setCompaigns
+  setCampaigns
 }) => {
   const methods = useForm();
   const [error, setError] = useState<string | null>(null);
@@ -60,9 +60,9 @@ const CreateCompaignModal: FC<CreateCompaignModalProps> = ({
     const res = MockCreateCampaign({ ...data, platform });
     if (res.succeed) {
       // Store un localstorage for mocking
-      const newCompaigns = campaigns;
-      newCompaigns.push({ ...data, platform });
-      setCompaigns(newCompaigns);
+      const newCampaigns = campaigns;
+      newCampaigns.push({ ...data, platform });
+      setCampaigns(newCampaigns);
       handleClose();
     } else {
       setError(res?.message || 'An error occured please try again');
@@ -78,7 +78,7 @@ const CreateCompaignModal: FC<CreateCompaignModalProps> = ({
         aria-describedby='alert-dialog-description'
       >
         <div className={s.subContainer}>
-          <DialogTitle id='alert-dialog-title'>Create new Compaign</DialogTitle>
+          <DialogTitle id='alert-dialog-title'>Create new Campaign</DialogTitle>
           <DialogContent>
             <DialogContentText id='alert-dialog-description'>
               {error ? <Alert severity='error'>{error}</Alert> : null}
@@ -113,4 +113,4 @@ const CreateCompaignModal: FC<CreateCompaignModalProps> = ({
   );
 };
 
-export default CreateCompaignModal;
+export default CreateCampaignModal;

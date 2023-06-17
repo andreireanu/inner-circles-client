@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
 
 import { Button, Card, CardContent, Container, Stack } from '@mui/material';
-import CompaignsSlider from './CompaignsSlider';
 import AddIcon from '@mui/icons-material/Add';
-import CreateCompaignModal from './CreateCompaignModal';
+import CreateCampaignModal from './CreateCampaignModal';
 
-import s from './CreatorCompaigns.module.css';
+import s from './CreatorCampaigns.module.css';
 import cn from 'classnames';
 
 
 
-const CreatorCompaigns = ({ creator, className }: any) => {
+const CreatorCampaigns = ({ creator, className }: any) => {
   const [openModal, setOpenModal] = useState(false);
-  const [campaigns, setCompaigns] = useState([]);
+  const [campaigns, setCampaigns] = useState([]);
 
 
 
@@ -26,16 +25,15 @@ const CreatorCompaigns = ({ creator, className }: any) => {
         >
           Create new campaign
         </Button>
-        <CreateCompaignModal
+        <CreateCampaignModal
           open={openModal}
           handleClose={() => setOpenModal(false)}
           campaigns={campaigns}
-          setCompaigns={setCompaigns}
+          setCampaigns={setCampaigns}
         />
       </div>
-      <CompaignsSlider className={s.compaignsSlider} compaigns={campaigns} />
     </div>
   );
 };
 
-export default CreatorCompaigns;
+export default CreatorCampaigns;

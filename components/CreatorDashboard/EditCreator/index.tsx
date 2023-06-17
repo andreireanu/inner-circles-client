@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import CreateExpModal from '../../CreateExpModal';
 import TitleView from '../../TitleView';
-import CreatorCompaigns from '../CreatorCompaigns';
+import CreatorCampaigns from '../CreatorCampaigns';
 
 import {
   decodeBase64,
@@ -159,7 +159,7 @@ const EditCreator = ({ creatorToken, address }: any) => {
           </CardContent>
         </Card>
       )}
-      <CreatorCompaigns />
+      <CreatorCampaigns />
 
     </Container>
   );
