@@ -30,7 +30,7 @@ import { contractAddress } from '../../../config';
 import { issueNonFungibleToken } from '../../../utils/issueNonFungibleToken';
 import { useForm } from 'react-hook-form';
 import { hex2a } from '../../../utils/hexUtils';
-
+import { CampaignDashboard } from '../../../components/CreatorDashboard';
 
 
 const EditCreator = ({ creatorToken, address }: any) => {
@@ -121,6 +121,12 @@ const EditCreator = ({ creatorToken, address }: any) => {
       });
   }, []);
 
+  /// Campaign Dashboard
+  const [showDashboard, setShowDashboard] = useState(false);
+  const handleButtonClick = () => {
+    setShowDashboard(!showDashboard);
+  };
+
   return (
     <Container className={'text-center'} >
       <h1>Welcome, Creator  &#127911; &#127926; &#127908;</h1>
@@ -141,6 +147,7 @@ const EditCreator = ({ creatorToken, address }: any) => {
         </CardContent>
       </Card>
       <TitleView className={s.title}>My Campaigns</TitleView>
+      <CreatorCampaigns />
       {campaignName == "" ? (
         <Card sx={{ mt: 2, display: 'inline-block' }}>
           <CardContent sx={{ textAlign: 'center' }}>
@@ -148,19 +155,21 @@ const EditCreator = ({ creatorToken, address }: any) => {
           </CardContent>
         </Card>
       ) : (
-        <Card sx={{ mt: 2, display: 'inline-block' }}>
+          <Card sx={{ mt: 2, display: 'inline-block', width: '75%' }}>
           <CardContent sx={{ textAlign: 'center' }}>
             Campaign Name: {campaignName} <br />
             Hashtag: {campaignHashtag} <br />
             Amount allocated: {campaignAmount} <br />
-              <Button sx={{ mt: 2, display: 'inline-block' }} fullWidth size='small' type='submit' variant='contained'>
-                Go to campaign dashboard
+              <Button
+                onClick={handleButtonClick}
+                sx={{ mt: 2, display: 'inline-block', width: '25%' }}
+                fullWidth size='small' type='submit' variant='contained' >
+                Campaign status
               </Button>
           </CardContent>
+            {showDashboard && <CampaignDashboard />}
         </Card>
       )}
-      <CreatorCampaigns />
-
     </Container>
   );
 };

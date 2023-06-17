@@ -13,8 +13,6 @@ const CreatorCampaigns = ({ creator, className }: any) => {
   const [openModal, setOpenModal] = useState(false);
   const [campaigns, setCampaigns] = useState([]);
 
-
-
   return (
     <div className={cn(s.container, className)}>
       <div className={s.buttonContainer}>
