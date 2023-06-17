@@ -31,7 +31,6 @@ const FanDashboardPage = ({ data, env }: any) => {
     setTwitterHandle(event.target.value);
   };
 
-
   return (
     <>
       <Head>
@@ -70,34 +69,32 @@ export async function getServerSideProps(context: any) {
   const address = context['query']['address']
 
   try {
-
     // GET MONGO DB DATA
     const client = await clientPromise
     const db = client.db(process.env.MONGODB_DB)
     const fan_collection = db.collection(process.env.MONGODB_FAN as string)
     const fan_data = await fan_collection.find({ address: address }).toArray()
 
-    // GET INSTAGRAM SESSION ID
-    const sessionid = null;
-    /*
-    await (async () => {
-      const ig = new IgApiClient();
-      ig.state.generateDevice(process.env.INSTA_USER as string);
+    // GET INSTAGRAM SESSION ID IF FAN NOT ENROLLED
+    let sessionid = null;
 
-      ig.request.end$.subscribe(async () => {
-        const serialized = await ig.state.serialize();
-        const data = serialized['cookies'];
-        const cookies = JSON.parse(data).cookies;
-        cookies.forEach((cookie: any) => {
-          if (cookie.key === 'sessionid') {
-            sessionid = cookie.value;
-            console.log(sessionid)
-          }
+    if (fan_data.length === 0) {
+      await (async () => {
+        const ig = new IgApiClient();
+        ig.state.generateDevice(process.env.INSTA_USER as string);
+        ig.request.end$.subscribe(async () => {
+          const serialized = await ig.state.serialize();
+          const data = serialized['cookies'];
+          const cookies = JSON.parse(data).cookies;
+          cookies.forEach((cookie: any) => {
+            if (cookie.key === 'sessionid') {
+              sessionid = cookie.value;
+            }
+          });
         });
-      });
-      await ig.account.login(process.env.INSTA_USER as string, process.env.INSTA_PASSWORD as string);
-    })();
-      */
+        await ig.account.login(process.env.INSTA_USER as string, process.env.INSTA_PASSWORD as string);
+      })();
+    }
 
     return {
       props: {

@@ -112,13 +112,9 @@ const EditCreator = ({ creatorToken, address }: any) => {
         const hexCampaign = Buffer.from(cmp, 'base64').toString('hex');
         let regexConst = new RegExp(/0000000(?!0)./g);
         let hexCampaignSplit = hexCampaign.replaceAll(regexConst, ',').split(',');
-        console.log(hexCampaignSplit)
         setCampaignName(hex2a(hexCampaignSplit[1]))
         setCampaignHashtag("#" + hex2a(hexCampaignSplit[2]).toLowerCase())
         setCampaignAmount(parseInt(hexCampaignSplit[3], 16))
-        console.log(campaignName);
-        console.log(campaignHashtag);
-        console.log(campaignAmount);
       })
       .catch(error => {
         console.error(error);
@@ -130,7 +126,7 @@ const EditCreator = ({ creatorToken, address }: any) => {
       <h1>Welcome, Creator  &#127911; &#127926; &#127908;</h1>
       <Card sx={{ mt: 2, display: 'inline-block' }}>
         <CardContent sx={{ textAlign: 'center' }}>
-          Funginble Token Name : {name}  <br />
+          Fungible Token Name : {name}  <br />
           Fungible Token Symbol : {token} <br />
           Supply : {supply} <br />
           {nft == "" && name != "" ? (
@@ -158,7 +154,7 @@ const EditCreator = ({ creatorToken, address }: any) => {
             Hashtag: {campaignHashtag} <br />
             Amount allocated: {campaignAmount} <br />
               <Button sx={{ mt: 2, display: 'inline-block' }} fullWidth size='small' type='submit' variant='contained'>
-                Finish Campaign
+                Go to campaign dashboard
               </Button>
           </CardContent>
         </Card>
