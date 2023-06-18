@@ -3,25 +3,19 @@ import clientPromise from "../../../../lib/mongodb"
 
 export default async (req, res) => {
     const {
-        query: { id },
         method,
     } = req;
+    const { campaignData, campaign } = JSON.parse(req.body)
     const client = await clientPromise;
     const db = client.db(process.env.MONGODB_DB);
-    const fan_collection = db.collection(process.env.MONGODB_FAN);
+    const campaign_collection = db.collection(campaign);
     let result;
-
 
     switch (method) {
         case 'POST':
             {
-                const { user } = JSON.parse(req.body);
-                result = await fan_collection.insertOne(
-                    {
-                        id: user.id,
-                        username: user.username,
-                        address: user.address
-                    });
+                result = await campaign_collection.insertMany(
+                    campaignData);
                 if (result['acknowledged'] == true) {
                     res.status(200).json("");
                 } else {

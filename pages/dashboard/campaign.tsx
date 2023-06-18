@@ -7,6 +7,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getCampaignData } from '../../lib/crud'
 
+
 const CampaignDashboardPage = ({ data, env }: any) => {
 
     const router = useRouter();
@@ -70,7 +71,7 @@ export async function getServerSideProps(context: any) {
                     isDbConnected: true,
                 },
                 data: {
-                    fan_data: JSON.parse(JSON.stringify(fan_data)),
+                    campaign_data: JSON.parse(JSON.stringify(fan_data)),
                 },
                 env: {
                     INSTA_URL: process.env.INSTA_URL,
