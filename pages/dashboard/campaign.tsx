@@ -12,16 +12,12 @@ const CampaignDashboardPage = ({ data, env }: any) => {
     const router = useRouter();
     const { address } = router.query;
     const { hashtag } = router.query;
-    console.log(address)
-    console.log(hashtag)
-    console.log(data)
-    console.log(env)
 
     return (
         <Container maxWidth='sm' sx={{ mt: 5 }}>
             <Card sx={{ mt: 2 }}>
                 <CardContent sx={{ textAlign: 'center' }}>
-                    <Button variant='contained' size='medium' onClick={() => getCampaignData(hashtag, env)}>
+                    <Button variant='contained' size='medium' onClick={() => getCampaignData(hashtag, env, data)}>
                         Get current data
                     </Button>
                 </CardContent>
@@ -40,8 +36,6 @@ const CampaignDashboardPage = ({ data, env }: any) => {
 
 export async function getServerSideProps(context: any) {
 
-    const address = context['query']['address']
-
     try {
         // GET MONGO DB DATA
         const client = await clientPromise
@@ -50,7 +44,7 @@ export async function getServerSideProps(context: any) {
         const fan_data = await fan_collection.find().toArray()
 
         // GET INSTAGRAM SESSION ID IF FAN NOT ENROLLED
-        let sessionid = '7553568911%3AX7q2z2pM25qK6r%3A0%3AAYf9xtCb22xMSJE9veutabfJMaof9gVHbc5RVWsycg';
+        let sessionid = '7553568911%3A4qIjKj518QHeXF%3A12%3AAYejuC1dsj4TstkQG1Hbbd2omVnR13WPgQhay-hukg';
 
         /*
         await (async () => {
