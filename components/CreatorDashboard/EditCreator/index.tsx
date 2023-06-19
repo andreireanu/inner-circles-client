@@ -122,9 +122,6 @@ const EditCreator = ({ creatorToken, address }: any) => {
 
   /// Campaign Dashboard
   const [showDashboard, setShowDashboard] = useState(false);
-  const handleButtonClick = () => {
-    setShowDashboard(!showDashboard);
-  };
 
   return (
     <Container className={'text-center'} >
