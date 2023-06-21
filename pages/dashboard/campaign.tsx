@@ -18,12 +18,18 @@ const CampaignDashboardPage = ({ data, env }: any) => {
 
     const modifiedArray = data.campaign_data.map(({ id, _id, ...rest }: { id: string, _id: string, [key: string]: any }) => ({ id: _id, ...rest }));
     console.log(modifiedArray);
+    modifiedArray.forEach((element: any) => {
+        const timestamp = element.timestamp * 1000; // Convert timestamp to milliseconds
+        const date = new Date(timestamp);
+        const utcTime = date.toUTCString().slice(5, 22); // Extract day and hour in UTC format
+        element.timestamp = utcTime; // Update the timestamp property with the UTC time
+    });
 
     const columns: GridColDef[] = [
-        { field: 'username', headerName: 'User', width: 100 },
-        { field: 'likes', headerName: 'Likes', width: 100 },
-        { field: 'comments', headerName: 'Comments', width: 100 },
-        { field: 'timestamp', headerName: 'Timestamp', width: 100 },
+        { field: 'username', headerName: 'User', width: 100, flex: 1, headerAlign: 'center', align: 'center' },
+        { field: 'timestamp', headerName: 'Timestamp', width: 100, flex: 1, headerAlign: 'center', align: 'center' },
+        { field: 'likes', headerName: 'Likes', type: "number", width: 100, flex: 1, headerAlign: 'center', align: 'center' },
+        { field: 'comments', headerName: 'Comments', type: "number", width: 100, flex: 1, headerAlign: 'center', align: 'center' },
     ];
 
     return (
