@@ -120,9 +120,6 @@ const EditCreator = ({ creatorToken, address }: any) => {
       });
   }, []);
 
-  /// Campaign Dashboard
-  const [showDashboard, setShowDashboard] = useState(false);
-
   return (
     <Container className={'text-center'} >
       <h1>Welcome, Creator  &#127911; &#127926; &#127908;</h1>
@@ -152,7 +149,7 @@ const EditCreator = ({ creatorToken, address }: any) => {
             Campaign Name: {campaignName} <br />
             Hashtag: {campaignHashtag} <br />
             Amount allocated: {campaignAmount} <br />
-              <Link href={`/dashboard/campaign?address=${address}&hashtag=${campaignHashtag.substring(1)}`}  >
+              <Link href={`/dashboard/campaign?address=${address}&name=${campaignName}&hashtag=${campaignHashtag.substring(1)}`}  >
                 <Button
                 sx={{ mt: 2, display: 'inline-block', width: '25%' }}
                 fullWidth size='small' type='submit' variant='contained' >

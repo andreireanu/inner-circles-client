@@ -24,7 +24,7 @@ import { NotAuthRedirectWrapper } from '../../components/NotAuthRedirectWrapper'
 
 const FanDashboardPage = ({ data, env }: any) => {
 
-  const [fan, setFan] = useState(data.fan_data || [])
+  const [fan, setFan] = useState(data.fanData || [])
   const [instaHandle, setTwitterHandle] = useState('');
 
   const handleTwitterHandleInputChange = (event: { target: { value: SetStateAction<string>; }; }) => {
@@ -73,12 +73,12 @@ export async function getServerSideProps(context: any) {
     const client = await clientPromise
     const db = client.db(process.env.MONGODB_DB)
     const fan_collection = db.collection(process.env.MONGODB_FAN as string)
-    const fan_data = await fan_collection.find({ address: address }).toArray()
+    const fanData = await fan_collection.find({ address: address }).toArray()
 
     // GET INSTAGRAM SESSION ID IF FAN NOT ENROLLED
     let sessionid = null;
 
-    if (fan_data.length === 0) {
+    if (fanData.length === 0) {
       await (async () => {
         const ig = new IgApiClient();
         ig.state.generateDevice(process.env.INSTA_USER as string);
@@ -102,7 +102,7 @@ export async function getServerSideProps(context: any) {
           isDbConnected: true,
         },
         data: {
-          fan_data: fan_data[0] ? JSON.parse(JSON.stringify(fan_data[0])) : "",
+          fanData: fanData[0] ? JSON.parse(JSON.stringify(fanData[0])) : "",
         },
         env: {
           INSTA_URL: process.env.INSTA_URL,
