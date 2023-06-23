@@ -25,6 +25,13 @@ function formatData(rawData: any, fanData: any) {
     return rawData;
 }
 
+const getRowHeight = (params: any) => {
+    const lineHeight = 20; // Specify the line height for each row
+    const numLines = Math.ceil(params.length / 40); // Adjust the line length to your desired value
+    return lineHeight * numLines + 16; // Add padding or margin if needed
+};
+
+
 const CampaignDashboardPage = ({ data, env }: any) => {
 
     interface CampaignFormat {
@@ -46,19 +53,21 @@ const CampaignDashboardPage = ({ data, env }: any) => {
     const hashtagValue = hashtag || '';
 
     const columns: GridColDef[] = [
-        { field: 'username', headerName: 'User', width: 100, flex: 1, headerAlign: 'center', align: 'center' },
-        { field: 'timestamp', headerName: 'Timestamp', width: 100, flex: 1, headerAlign: 'center', align: 'center' },
-        { field: 'likes', headerName: 'Likes', type: "number", width: 100, flex: 1, headerAlign: 'center', align: 'center' },
-        { field: 'comments', headerName: 'Comments', type: "number", width: 100, flex: 1, headerAlign: 'center', align: 'center' },
+        { field: 'username', headerName: 'User', width: 100, headerAlign: 'center', align: 'center' },
+        { field: 'timestamp', headerName: 'Timestamp', width: 140, headerAlign: 'center', align: 'center' },
+        { field: 'likes', headerName: 'Likes', type: "number", width: 90, headerAlign: 'center', align: 'center' },
+        { field: 'comments', headerName: 'Comments', type: "number", width: 90, headerAlign: 'center', align: 'center' },
+        { field: 'hashtags', headerName: 'Hashtags', type: "number", headerAlign: 'center', align: 'center' },
+        { field: 'mentions', headerName: 'Mentions', type: "number", width: 150, headerAlign: 'center', align: 'center' },
         {
-            field: 'description', headerName: 'Description', type: "number", flex: 1, headerAlign: 'center', align: 'center',
+            field: 'description', headerName: 'Description', type: "number", headerAlign: 'center', align: 'center', flex: 1,
             renderCell: (params) => (
-                < div style={{ whiteSpace: 'pre-wrap' }}>
-                    <Typography  >{params.value}</Typography>
-                </div >)
+                <div style={{ whiteSpace: 'normal', wordWrap: 'break-word', wordBreak: 'break-word' }}>
+                    {params.value}
+                </div>
+            )
         },
-        { field: 'hashtags', headerName: 'Hashtags', type: "number", flex: 1, headerAlign: 'center', align: 'center' },
-        { field: 'mentions', headerName: 'Mentions', type: "number", flex: 1, headerAlign: 'center', align: 'center' },
+
     ];
 
     useEffect(() => {
@@ -102,6 +111,9 @@ const CampaignDashboardPage = ({ data, env }: any) => {
                             paginationModel: { page: 0, pageSize: 50 },
                         },
                     }}
+                    autoHeight
+                    pagination
+                    getRowHeight={getRowHeight}
                 />
             </Card>
         </Container >
