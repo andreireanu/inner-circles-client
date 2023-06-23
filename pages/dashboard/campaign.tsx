@@ -9,6 +9,22 @@ import { useRouter } from 'next/router';
 import { getCampaignDataFromInsta } from '../../lib/crud'
 import { useEffect, useState } from 'react';
 
+
+function formatData(rawData: any, fanData: any) {
+    rawData.forEach((element: any) => {
+        const timestamp = element.timestamp * 1000; // Convert timestamp to milliseconds
+        const date = new Date(timestamp);
+        const utcTime = date.toUTCString().slice(5, 22); // Extract day and hour in UTC format
+        element.timestamp = utcTime; // Update the timestamp property with the UTC time
+        fanData.forEach((fan: any) => {
+            if (fan.id === element.instaId) {
+                element.username = fan.username;
+            }
+        })
+    });
+    return rawData;
+}
+
 const CampaignDashboardPage = ({ data, env }: any) => {
 
     interface CampaignFormat {
@@ -17,44 +33,52 @@ const CampaignDashboardPage = ({ data, env }: any) => {
         likes: number;
         timestamp: number;
         username: string;
+        description: string;
+        hashtags: string;
+        mentions: string;
     }
 
     const router = useRouter();
     const { address } = router.query;
     const { hashtag } = router.query;
     const { name } = router.query;
-    const [campaignData, setCampaignData] = useState([]);
-    const [refreshToGetData, setRefreshToGetData] = useState(false);
     const [rows, setRows] = useState<CampaignFormat[]>([]);
+    const hashtagValue = hashtag || '';
 
     const columns: GridColDef[] = [
         { field: 'username', headerName: 'User', width: 100, flex: 1, headerAlign: 'center', align: 'center' },
         { field: 'timestamp', headerName: 'Timestamp', width: 100, flex: 1, headerAlign: 'center', align: 'center' },
         { field: 'likes', headerName: 'Likes', type: "number", width: 100, flex: 1, headerAlign: 'center', align: 'center' },
         { field: 'comments', headerName: 'Comments', type: "number", width: 100, flex: 1, headerAlign: 'center', align: 'center' },
+        {
+            field: 'description', headerName: 'Description', type: "number", flex: 1, headerAlign: 'center', align: 'center',
+            renderCell: (params) => (
+                < div style={{ whiteSpace: 'pre-wrap' }}>
+                    <Typography  >{params.value}</Typography>
+                </div >)
+        },
+        { field: 'hashtags', headerName: 'Hashtags', type: "number", flex: 1, headerAlign: 'center', align: 'center' },
+        { field: 'mentions', headerName: 'Mentions', type: "number", flex: 1, headerAlign: 'center', align: 'center' },
     ];
 
     useEffect(() => {
-        if (data.campaignData.length === 0 && refreshToGetData == false) {
-            getCampaignDataFromInsta(hashtag, env, data);
-            setRefreshToGetData(true);
-        } else {
-            setCampaignData(data.campaignData);
-            console.log(data.campaignData)
-            const modifiedArray = campaignData.map(({ id, _id, ...rest }: { id: string, _id: string, [key: string]: any }) => ({ id: _id, ...rest }));
-            // modifiedArray.forEach((element: any) => {
-            //     const timestamp = element.timestamp * 1000; // Convert timestamp to milliseconds
-            //     const date = new Date(timestamp);
-            //     const utcTime = date.toUTCString().slice(5, 22); // Extract day and hour in UTC format
-            //     element.timestamp = utcTime; // Update the timestamp property with the UTC time
-            // });
-            console.log(modifiedArray)
-            setRows(modifiedArray)
-        }
-    }, [refreshToGetData])
+        const fetchData = async () => {
+            if (data.campaignData.length === 0 && rows.length === 0) {
+                let instaData = await getCampaignDataFromInsta(hashtagValue, env, data);
+                let modifiedArray = formatData(instaData, data.fanData);
+                setRows(modifiedArray);
+            } else {
+                let modifiedArray = formatData(data.campaignData, data.fanData);
+                console.log(modifiedArray);
+                setRows(modifiedArray);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     return (
-        <Container maxWidth='sm' sx={{ mt: 5 }}>
+        <Container maxWidth='xl' sx={{ mt: 5 }}>
             <Card sx={{ mt: 2 }}>
                 <CardContent sx={{ textAlign: 'center' }}>
                     <Typography variant='h4' sx={{ mt: 3, mb: 1, mr: 3 }}>  {name} campaign
@@ -103,8 +127,9 @@ export async function getServerSideProps(context: any) {
 
         // GET INSTAGRAM SESSION ID  
         let sessionid = '7553568911%3A4qIjKj518QHeXF%3A12%3AAYejuC1dsj4TstkQG1Hbbd2omVnR13WPgQhay-hukg';
-
         /*
+        let sessionid = null
+
         await (async () => {
             const ig = new IgApiClient();
             ig.state.generateDevice(process.env.INSTA_USER as string);
@@ -121,7 +146,6 @@ export async function getServerSideProps(context: any) {
             await ig.account.login(process.env.INSTA_USER as string, process.env.INSTA_PASSWORD as string);
         })();
         */
-
         return {
             props: {
                 connection: {
@@ -149,13 +173,6 @@ export async function getServerSideProps(context: any) {
     }
 }
 
-export default function CampaignDashboard({
-    data, env
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
-    return (
-        <CampaignDashboardPage data={data} env={env} />
-    );
-}
-
+export default CampaignDashboardPage;
 
 
