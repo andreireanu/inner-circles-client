@@ -1,5 +1,5 @@
 import { Button, Card, CardContent, Container, Typography } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowHeightParams } from '@mui/x-data-grid';
 import Link from 'next/link';
 import { IgApiClient } from 'instagram-private-api';
 import clientPromise from '../../lib/mongodb'
@@ -21,6 +21,9 @@ function formatData(rawData: any, fanData: any) {
                 element.username = fan.username;
             }
         })
+        if (element.username == undefined) {
+            element.username = element.instaId
+        }
     });
     return rawData;
 }
@@ -57,8 +60,6 @@ const CampaignDashboardPage = ({ data, env }: any) => {
         { field: 'timestamp', headerName: 'Timestamp', width: 140, headerAlign: 'center', align: 'center' },
         { field: 'likes', headerName: 'Likes', type: "number", width: 90, headerAlign: 'center', align: 'center' },
         { field: 'comments', headerName: 'Comments', type: "number", width: 90, headerAlign: 'center', align: 'center' },
-        { field: 'hashtags', headerName: 'Hashtags', type: "number", headerAlign: 'center', align: 'center' },
-        { field: 'mentions', headerName: 'Mentions', type: "number", width: 150, headerAlign: 'center', align: 'center' },
         {
             field: 'description', headerName: 'Description', type: "number", headerAlign: 'center', align: 'center', flex: 1,
             renderCell: (params) => (
@@ -67,6 +68,23 @@ const CampaignDashboardPage = ({ data, env }: any) => {
                 </div>
             )
         },
+        {
+            field: 'hashtags', headerName: 'Hashtags', type: "number", headerAlign: 'center', align: 'center', flex: 1,
+            renderCell: (params) => (
+                <div style={{ whiteSpace: 'normal', wordWrap: 'break-word', wordBreak: 'break-word' }}>
+                    {params.value}
+                </div>
+            )
+        },
+        {
+            field: 'mentions', headerName: 'Mentions', type: "number", width: 150, headerAlign: 'center', align: 'center', flex: 1,
+            renderCell: (params) => (
+                <div style={{ whiteSpace: 'normal', wordWrap: 'break-word', wordBreak: 'break-word' }}>
+                    {params.value}
+                </div>
+            )
+        },
+
 
     ];
 
@@ -89,6 +107,11 @@ const CampaignDashboardPage = ({ data, env }: any) => {
     return (
         <Container maxWidth='xl' sx={{ mt: 5 }}>
             <Card sx={{ mt: 2 }}>
+                <Link href={`/dashboard/creator?address=${address}`} >
+                    <Button variant='contained' size='large'>
+                        Back
+                    </Button>
+                </Link>
                 <CardContent sx={{ textAlign: 'center' }}>
                     <Typography variant='h4' sx={{ mt: 3, mb: 1, mr: 3 }}>  {name} campaign
                     </Typography>
@@ -98,11 +121,7 @@ const CampaignDashboardPage = ({ data, env }: any) => {
                         Refresh data
                     </Button>
                 </CardContent>
-                <Link href={`/dashboard/creator?address=${address}`} >
-                    <Button variant='contained' size='large'>
-                        Back
-                    </Button>
-                </Link>
+
                 <DataGrid
                     rows={rows}
                     columns={columns}
@@ -113,7 +132,13 @@ const CampaignDashboardPage = ({ data, env }: any) => {
                     }}
                     autoHeight
                     pagination
-                    getRowHeight={getRowHeight}
+                    getRowHeight={({ id, densityFactor }: GridRowHeightParams) => {
+                        if ((id as number) % 2 === 0) {
+                            return 100 * densityFactor;
+                        }
+
+                        return null;
+                    }}
                 />
             </Card>
         </Container >
@@ -152,6 +177,7 @@ export async function getServerSideProps(context: any) {
                 cookies.forEach((cookie: any) => {
                     if (cookie.key === 'sessionid') {
                         sessionid = cookie.value;
+                        console.log(sessionid)
                     }
                 });
             });
