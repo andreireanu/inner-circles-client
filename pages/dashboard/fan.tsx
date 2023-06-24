@@ -55,7 +55,7 @@ const FanDashboardPage = ({ data, env }: any) => {
           </div>
           : <div>
             <Typography variant='h4' sx={{ mt: 3, mb: 3, mr: 3 }}> Congratulations! Address <span style={{ color: blue[500] }}>{env.address} </span>is registered with the following Instagram user: &nbsp;
-              <span style={{ color: blue[500] }}> {fan['username']} </span>
+              <span style={{ color: blue[500] }}> @{fan['username']} </span>
             </Typography>
 
           </div>}
@@ -89,6 +89,7 @@ export async function getServerSideProps(context: any) {
           cookies.forEach((cookie: any) => {
             if (cookie.key === 'sessionid') {
               sessionid = cookie.value;
+              console.log(sessionid)
             }
           });
         });

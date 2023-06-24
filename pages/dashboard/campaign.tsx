@@ -9,6 +9,16 @@ import { useRouter } from 'next/router';
 import { getCampaignDataFromInsta } from '../../lib/crud'
 import { useEffect, useState } from 'react';
 
+interface CampaignFormat {
+    comments: number;
+    id: string;
+    likes: number;
+    timestamp: number;
+    username: string;
+    description: string;
+    hashtags: string;
+    mentions: string;
+}
 
 function formatData(rawData: any, fanData: any) {
     rawData.forEach((element: any) => {
@@ -21,42 +31,66 @@ function formatData(rawData: any, fanData: any) {
                 element.username = fan.username;
             }
         })
-        if (element.username == undefined) {
-            element.username = element.instaId
-        }
+
     });
     return rawData;
 }
 
-const getRowHeight = (params: any) => {
-    const lineHeight = 20; // Specify the line height for each row
-    const numLines = Math.ceil(params.length / 40); // Adjust the line length to your desired value
-    return lineHeight * numLines + 16; // Add padding or margin if needed
-};
+interface UsernameAmount {
+    id: string
+    username: string;
+    amount: number;
+    amountTokens: number;
+}
 
+function calculateAllocation(campaignData: CampaignFormat[], amount: any) {
+    let amountInt = parseInt(amount);
+    const sums: UsernameAmount[] = [];
+    let totalSum = 0;
+
+    campaignData.forEach((record) => {
+        if (record.username !== undefined) {
+            const sum = record.likes + record.comments;
+            const existingIndex = sums.findIndex((entry) => entry.username === record.username);
+            if (existingIndex !== -1) {
+                sums[existingIndex].amount += sum;
+            } else {
+                sums.push({ id: record.id, username: record.username, amount: sum, amountTokens: 0 });
+            }
+        }
+    });
+    for (let i = 0; i < sums.length; i++) {
+        const { amount } = sums[i];
+        console.log(Math.sqrt(amount))
+        totalSum += Math.sqrt(amount)
+    }
+    console.log(totalSum);
+
+    for (let i = 0; i < sums.length; i++) {
+        const { amount } = sums[i];
+        const percentage = Math.sqrt(amount) / totalSum;
+        sums[i].amountTokens = percentage * amountInt;
+    }
+    console.log(sums);
+    return sums;
+}
 
 const CampaignDashboardPage = ({ data, env }: any) => {
-
-    interface CampaignFormat {
-        comments: number;
-        id: string;
-        likes: number;
-        timestamp: number;
-        username: string;
-        description: string;
-        hashtags: string;
-        mentions: string;
-    }
 
     const router = useRouter();
     const { address } = router.query;
     const { hashtag } = router.query;
     const { name } = router.query;
+    const { amount } = router.query;
     const [rows, setRows] = useState<CampaignFormat[]>([]);
+    const [allocation, setAllocation] = useState<UsernameAmount[]>([]);
     const hashtagValue = hashtag || '';
+    const amountValue = amount || '';
 
-    const columns: GridColDef[] = [
-        { field: 'username', headerName: 'User', width: 100, headerAlign: 'center', align: 'center' },
+    const columnsCampaignData: GridColDef[] = [
+        {
+            field: 'username', headerName: 'User', width: 150, headerAlign: 'center', align: 'center', flex: 1,
+        },
         { field: 'timestamp', headerName: 'Timestamp', width: 140, headerAlign: 'center', align: 'center' },
         { field: 'likes', headerName: 'Likes', type: "number", width: 90, headerAlign: 'center', align: 'center' },
         { field: 'comments', headerName: 'Comments', type: "number", width: 90, headerAlign: 'center', align: 'center' },
@@ -84,64 +118,100 @@ const CampaignDashboardPage = ({ data, env }: any) => {
                 </div>
             )
         },
-
-
     ];
+
+    const columnsAllocationData: GridColDef[] = [
+        { field: 'username', headerName: 'Username', width: 140, headerAlign: 'center', align: 'center', flex: 1 },
+        {
+            field: 'amountTokens', headerName: 'Token Allocation', width: 140, headerAlign: 'center', align: 'center', flex: 1,
+            renderCell: (params) => (
+                <div style={{ whiteSpace: 'normal', wordWrap: 'break-word', wordBreak: 'break-word' }}>
+                    {params.value.toFixed(0)}
+                </div>
+            )
+        },
+    ]
 
     useEffect(() => {
         const fetchData = async () => {
+            let modifiedArray: any;
             if (data.campaignData.length === 0 && rows.length === 0) {
                 let instaData = await getCampaignDataFromInsta(hashtagValue, env, data);
-                let modifiedArray = formatData(instaData, data.fanData);
-                setRows(modifiedArray);
+                modifiedArray = formatData(instaData, data.fanData);
             } else {
-                let modifiedArray = formatData(data.campaignData, data.fanData);
+                modifiedArray = formatData(data.campaignData, data.fanData);
                 console.log(modifiedArray);
-                setRows(modifiedArray);
             }
+            setRows(modifiedArray);
+            let allocation = calculateAllocation(modifiedArray, amountValue);
+            setAllocation(allocation);
         };
 
         fetchData();
     }, []);
 
     return (
-        <Container maxWidth='xl' sx={{ mt: 5 }}>
-            <Card sx={{ mt: 2 }}>
-                <Link href={`/dashboard/creator?address=${address}`} >
-                    <Button variant='contained' size='large'>
-                        Back
-                    </Button>
-                </Link>
-                <CardContent sx={{ textAlign: 'center' }}>
-                    <Typography variant='h4' sx={{ mt: 3, mb: 1, mr: 3 }}>  {name} campaign
-                    </Typography>
-                    <Typography variant='h5' sx={{ mt: 1, mb: 3, mr: 3 }}>  #{hashtag}
-                    </Typography>
-                    <Button variant='contained' size='medium' onClick={() => getCampaignDataFromInsta(hashtag, env, data)} >
-                        Refresh data
-                    </Button>
-                </CardContent>
+        <div>
+            <Container maxWidth='xl' sx={{ mt: 5 }}>
+                <Card sx={{ mt: 2 }}>
+                    <Link href={`/dashboard/creator?address=${address}`} >
+                        <Button variant='contained' size='large'>
+                            Back
+                        </Button>
+                    </Link>
+                    <CardContent sx={{ textAlign: 'center' }}>
+                        <Typography variant='h4' sx={{ mt: 3, mb: 1, mr: 3 }}>  {name} campaign
+                        </Typography>
+                        <Typography variant='h5' sx={{ mt: 1, mb: 1, mr: 3 }}>  #{hashtag}
+                        </Typography>
+                        <Typography variant='h5' sx={{ mt: 1, mb: 3, mr: 3 }}>  amount: {amount} tokens
+                        </Typography>
+                        <Button variant='contained' size='medium' onClick={() => getCampaignDataFromInsta(hashtagValue, env, data)} >
+                            Refresh data
+                        </Button>
+                    </CardContent>
 
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: { page: 0, pageSize: 50 },
-                        },
-                    }}
-                    autoHeight
-                    pagination
-                    getRowHeight={({ id, densityFactor }: GridRowHeightParams) => {
-                        if ((id as number) % 2 === 0) {
-                            return 100 * densityFactor;
-                        }
-
-                        return null;
-                    }}
-                />
-            </Card>
-        </Container >
+                    <DataGrid
+                        rows={rows}
+                        columns={columnsCampaignData}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 50 },
+                            },
+                        }}
+                        autoHeight
+                        pagination
+                        getRowHeight={({ id, densityFactor }: GridRowHeightParams) => {
+                            if ((id as number) % 2 === 0) {
+                                return 100 * densityFactor;
+                            }
+                            return null;
+                        }}
+                    />
+                </Card>
+            </Container >
+            <Container maxWidth='sm' sx={{ mt: 5 }}>
+                <Card sx={{ mt: 2 }}>
+                    <DataGrid
+                        rows={allocation}
+                        columns={columnsAllocationData}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 50 },
+                            },
+                        }}
+                        autoHeight
+                        pagination
+                        getRowHeight={({ id, densityFactor }: GridRowHeightParams) => {
+                            if ((id as number) % 2 === 0) {
+                                return 100 * densityFactor;
+                            }
+                            return null;
+                        }}
+                    />
+                </Card>
+            </Container >
+        </div>
     );
 
 };

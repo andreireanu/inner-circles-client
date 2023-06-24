@@ -149,7 +149,7 @@ const EditCreator = ({ creatorToken, address }: any) => {
             Campaign Name: {campaignName} <br />
             Hashtag: {campaignHashtag} <br />
             Amount allocated: {campaignAmount} <br />
-              <Link href={`/dashboard/campaign?address=${address}&name=${campaignName}&hashtag=${campaignHashtag.substring(1)}`}  >
+              <Link href={`/dashboard/campaign?address=${address}&name=${campaignName}&hashtag=${campaignHashtag.substring(1)}&amount=${campaignAmount}`}  >
                 <Button
                 sx={{ mt: 2, display: 'inline-block', width: '25%' }}
                 fullWidth size='small' type='submit' variant='contained' >
