@@ -40,21 +40,42 @@ const EditCreator = ({ creatorToken, address }: any) => {
   // SET TOKEN DATA
   const [name, setName] = useState('');
   const [token, setToken] = useState('');
-  const [supply, setSupply] = useState('');
+  const [supply, setSupply] = useState(0);
 
-  const tokenDataUrl = API_URL + '/tokens/' + creatorToken;
   useEffect(() => {
+    const tokenDataUrl = API_URL + '/tokens/' + creatorToken;
     fetch(tokenDataUrl)
       .then((response) => response.json())
       .then((responseJson) => {
         setName(responseJson.name);
         setToken(responseJson.ticker);
-        setSupply(responseJson.supply);
       })
       .catch(error => {
         console.error('Error:', error);
       });
   }, []);
+
+  useEffect(() => {
+    if (token) {
+      const tokenAccountsUrl = API_URL + '/tokens/' + token + '/accounts';
+      console.log(tokenAccountsUrl);
+      fetch(tokenAccountsUrl)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          responseJson.forEach((record: any) => {
+            console.log(record);
+            if (record.address == contractAddress) {
+              setSupply(record.balance);
+            }
+          })
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+  }, [token]);
+
+
 
   // SET NFT DATA
   const [nft, setNft] = useState('');
@@ -127,7 +148,7 @@ const EditCreator = ({ creatorToken, address }: any) => {
         <CardContent sx={{ textAlign: 'center' }}>
           Fungible Token Name : {name}  <br />
           Fungible Token Symbol : {token} <br />
-          Supply : {supply} <br />
+          Supply left: {supply} <br />
           {nft == "" && name != "" ? (
             <span>
               <Button fullWidth size='large' type='submit' variant='contained' sx={{ mt: 2 }} onClick={handleSubmit(onSubmit)} >
