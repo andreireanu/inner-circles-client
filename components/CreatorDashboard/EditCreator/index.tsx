@@ -11,6 +11,7 @@ import {
 import CreateExpModal from '../../CreateExpModal';
 import TitleView from '../../TitleView';
 import CreatorCampaigns from '../CreatorCampaigns';
+import CreatorNFTs from '../CreatorNFTs';
 
 import {
   decodeBase64,
@@ -58,7 +59,6 @@ const EditCreator = ({ creatorToken, address }: any) => {
   useEffect(() => {
     if (token) {
       const tokenAccountsUrl = API_URL + '/tokens/' + token + '/accounts';
-      console.log(tokenAccountsUrl);
       fetch(tokenAccountsUrl)
         .then((response) => response.json())
         .then((responseJson) => {
@@ -127,13 +127,16 @@ const EditCreator = ({ creatorToken, address }: any) => {
     })
       .then(response => response.json())
       .then(data => {
-        let cmp = data.data.data.returnData[0];
-        const hexCampaign = Buffer.from(cmp, 'base64').toString('hex');
-        let regexConst = new RegExp(/0000000(?!0)./g);
-        let hexCampaignSplit = hexCampaign.replaceAll(regexConst, ',').split(',');
-        setCampaignName(hex2a(hexCampaignSplit[1]))
-        setCampaignHashtag("#" + hex2a(hexCampaignSplit[2]).toLowerCase())
-        setCampaignAmount(parseInt(hexCampaignSplit[3], 16))
+        try {
+          let cmp = data.data.data.returnData[0];
+          const hexCampaign = Buffer.from(cmp, 'base64').toString('hex');
+          let regexConst = new RegExp(/0000000(?!0)./g);
+          let hexCampaignSplit = hexCampaign.replaceAll(regexConst, ',').split(',');
+          setCampaignName(hex2a(hexCampaignSplit[1]))
+          setCampaignHashtag("#" + hex2a(hexCampaignSplit[2]).toLowerCase())
+          setCampaignAmount(parseInt(hexCampaignSplit[3], 16))
+        } catch (err) {
+        } 
       })
       .catch(error => {
         console.error(error);
@@ -159,6 +162,8 @@ const EditCreator = ({ creatorToken, address }: any) => {
           )}
         </CardContent>
       </Card>
+      <TitleView className={s.title}>My NFTs</TitleView>
+      <CreatorNFTs />
       <TitleView className={s.title}>My Campaigns</TitleView>
       <CreatorCampaigns />
       {campaignName == "" ? (

@@ -40,7 +40,7 @@ const FanDashboardPage = ({ data, env }: any) => {
       <Container maxWidth='sm' sx={{ mt: 5, display: 'flex', align: "center", flexDirection: 'column' }} >
         <Typography variant='h3'> Welcome, Fan &#127926; &#127908; &#127911; </Typography>
         {fan.length === 0 ?
-          <div>
+          <>
             <Typography variant='h5' sx={{ mt: 3, mb: 3, mr: 3 }}> No Instagram account recorded for this address.
               Please enter your account below:
             </Typography>
@@ -52,13 +52,13 @@ const FanDashboardPage = ({ data, env }: any) => {
                 Register
               </Button>
             </div>
-          </div>
-          : <div>
+          </>
+          : <>
             <Typography variant='h4' sx={{ mt: 3, mb: 3, mr: 3 }}> Congratulations! Address <span style={{ color: blue[500] }}>{env.address} </span>is registered with the following Instagram user: &nbsp;
               <span style={{ color: blue[500] }}> @{fan['username']} </span>
             </Typography>
 
-          </div>}
+          </>}
       </Container>
     </>
   );

@@ -175,7 +175,7 @@ const CampaignDashboardPage = ({ data, env }: any) => {
     }, []);
 
     return (
-        <div>
+        <>
             <Container maxWidth='xl' sx={{ mt: 5 }}>
                 <Card sx={{ mt: 2 }}>
                     <Link href={`/dashboard/creator?address=${address}`} >
@@ -240,7 +240,7 @@ const CampaignDashboardPage = ({ data, env }: any) => {
                     </Box>
                 </Card>
             </Container >
-        </div>
+        </>
     );
 
 };

@@ -22,7 +22,6 @@ export async function getServerSideProps(context: any) {
 }
 
 const CreatorDashboardPage = ({ data }: any) => {
-  const [creator, setCreator] = useState(null);
   const { address } = data;
   const creatorToken = useGetCreatorToken({ address }) || "";
 
