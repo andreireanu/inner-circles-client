@@ -8,9 +8,6 @@ export const issueNonFungibleToken = async (
     tokenSymbol: string,
 ) => {
 
-    console.log(tokenName);
-    console.log(tokenSymbol);
-
     const transaction = {
         value: 50000000000000000,
         data: `issueNonFungibleToken@${stringToHex(tokenName)}@${stringToHex(tokenSymbol)}`,

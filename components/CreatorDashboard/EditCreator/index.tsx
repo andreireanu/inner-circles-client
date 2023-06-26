@@ -63,7 +63,6 @@ const EditCreator = ({ creatorToken, address }: any) => {
         .then((response) => response.json())
         .then((responseJson) => {
           responseJson.forEach((record: any) => {
-            console.log(record);
             if (record.address == contractAddress) {
               setSupply(record.balance);
             }

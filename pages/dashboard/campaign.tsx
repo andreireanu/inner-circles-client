@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, Container, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Container, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridRowHeightParams } from '@mui/x-data-grid';
 import Link from 'next/link';
 import { IgApiClient } from 'instagram-private-api';
@@ -8,6 +8,9 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getCampaignDataFromInsta } from '../../lib/crud'
 import { useEffect, useState } from 'react';
+import { sendCampaignTokens } from '../../utils/sendCampaignTokens';
+import { useForm } from 'react-hook-form';
+import { SubmitHandler, FieldValues } from 'react-hook-form';
 
 interface CampaignFormat {
     comments: number;
@@ -43,6 +46,11 @@ interface UsernameAmount {
     amountTokens: number;
 }
 
+interface MultiValue {
+    address: string,
+    amountTokens: number,
+}
+
 function calculateAllocation(campaignData: CampaignFormat[], amount: any) {
     let amountInt = parseInt(amount);
     const sums: UsernameAmount[] = [];
@@ -61,21 +69,21 @@ function calculateAllocation(campaignData: CampaignFormat[], amount: any) {
     });
     for (let i = 0; i < sums.length; i++) {
         const { amount } = sums[i];
-        console.log(Math.sqrt(amount))
         totalSum += Math.sqrt(amount)
     }
-    console.log(totalSum);
-
     for (let i = 0; i < sums.length; i++) {
         const { amount } = sums[i];
         const percentage = Math.sqrt(amount) / totalSum;
         sums[i].amountTokens = percentage * amountInt;
     }
-    console.log(sums);
     return sums;
 }
 
+
 const CampaignDashboardPage = ({ data, env }: any) => {
+
+    const methods = useForm();
+    const { handleSubmit } = methods;
 
     const router = useRouter();
     const { address } = router.query;
@@ -84,8 +92,25 @@ const CampaignDashboardPage = ({ data, env }: any) => {
     const { amount } = router.query;
     const [rows, setRows] = useState<CampaignFormat[]>([]);
     const [allocation, setAllocation] = useState<UsernameAmount[]>([]);
-    const hashtagValue = hashtag || '';
+    const hashtagValue = Array.isArray(hashtag) ? hashtag[0] : String(hashtag || '');
     const amountValue = amount || '';
+
+    const onSubmitSendTokens = async () => {
+
+        const multiValue = allocation.map((item) => {
+            const matchingRecord = data.fanData.find((record: any) => record.username === item.username);
+            if (matchingRecord) {
+                return {
+                    address: matchingRecord.address,
+                    amountTokens: item.amountTokens,
+                };
+            }
+            return null;
+        }).filter(Boolean);
+        const filteredArray: MultiValue[] = multiValue.filter(item => item !== null) as MultiValue[];
+        sendCampaignTokens(hashtagValue, filteredArray);
+        router.replace('/dashboard');
+    };
 
     const columnsCampaignData: GridColDef[] = [
         {
@@ -140,7 +165,6 @@ const CampaignDashboardPage = ({ data, env }: any) => {
                 modifiedArray = formatData(instaData, data.fanData);
             } else {
                 modifiedArray = formatData(data.campaignData, data.fanData);
-                console.log(modifiedArray);
             }
             setRows(modifiedArray);
             let allocation = calculateAllocation(modifiedArray, amountValue);
@@ -209,6 +233,11 @@ const CampaignDashboardPage = ({ data, env }: any) => {
                             return null;
                         }}
                     />
+                    <Box textAlign='center'>
+                        <Button variant='contained' size='large' sx={{ mt: 2, mb: 2 }} onClick={handleSubmit(onSubmitSendTokens)} >
+                            Send tokens
+                        </Button>
+                    </Box>
                 </Card>
             </Container >
         </div>
