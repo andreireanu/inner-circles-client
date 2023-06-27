@@ -12,6 +12,7 @@ import CreateExpModal from '../../CreateExpModal';
 import TitleView from '../../TitleView';
 import CreatorCampaigns from '../CreatorCampaigns';
 import CreatorNFTs from '../CreatorNFTs';
+import { DataGrid, GridColDef, GridRowHeightParams } from '@mui/x-data-grid';
 
 import {
   decodeBase64,
@@ -27,11 +28,21 @@ import { useGetAccount, useGetNetworkConfig } from '@multiversx/sdk-dapp/hooks';
 import { ProxyNetworkProvider } from '@multiversx/sdk-network-providers/out';
 import { smartContract } from '../../Dashboard/Actions/helpers/smartContractOLD';
 import s from './EditCreator.module.css';
-import { API_URL, QUERY_URL } from '../../../config';
+import { API_URL, QUERY_URL, NFT_URL } from '../../../config';
 import { contractAddress } from '../../../config';
 import { issueNonFungibleToken } from '../../../utils/issueNonFungibleToken';
 import { useForm } from 'react-hook-form';
 import { hex2a } from '../../../utils/hexUtils';
+import { spawn } from 'child_process';
+
+interface NftFormat {
+  id: string,
+  identifier: string;
+  name: string;
+  url: string;
+  balance: number;
+}
+
 
 const EditCreator = ({ creatorToken, address }: any) => {
 
@@ -109,7 +120,7 @@ const EditCreator = ({ creatorToken, address }: any) => {
     );
   };
 
-  // Get campaigns
+  // Get Campaigns
   const [campaignName, setCampaignName] = useState('');
   const [campaignHashtag, setCampaignHashtag] = useState('');
   const [campaignAmount, setCampaignAmount] = useState(0);
@@ -143,6 +154,64 @@ const EditCreator = ({ creatorToken, address }: any) => {
       });
   }, []);
 
+  // Get NFTs
+  const [nfts, setNfts] = useState<NftFormat[]>([]);
+  useEffect(() => {
+    if (nft) {
+      let generalUri = NFT_URL + '?search=' + nft;
+      fetch(generalUri)
+        .then(response => response.json())
+        .then(data => {
+          try {
+            console.log(data)
+            data.forEach((record: any) => {
+              console.log(record);
+              let accountUri = NFT_URL + '/' + record.identifier + '/accounts';
+              let balance = 0;
+              fetch(accountUri)
+                .then(response => response.json())
+                .then(data => {
+                  data.forEach((account: any) => {
+                    console.log(account);
+                    if (account.address === contractAddress) {
+                      balance = account.balance;
+                      console.log(balance);
+                      const nftInstance = {
+                        id: record.nonce,
+                        identifier: record.identifier,
+                        name: record.name,
+                        url: record.url,
+                        balance: balance,
+                      };
+                      setNfts((prevState: NftFormat[]) => [...prevState, nftInstance]);
+                    }
+                  })
+                });
+            });
+          } catch (err) {
+          }
+        })
+        .catch(error => {
+        });
+    }
+
+  }, [nft, setNfts]);
+
+  const columns: GridColDef[] = [
+    { field: 'identifier', headerName: 'Identifier', width: 140, headerAlign: 'center', align: 'center', flex: 1 },
+    { field: 'name', headerName: 'Name', width: 140, headerAlign: 'center', align: 'center', flex: 1 },
+    {
+      field: 'url', headerName: 'Asset', width: 140, headerAlign: 'center', align: 'center', flex: 1,
+      renderCell: (params) => (
+        <img src={params.value} alt="Nft" width="20%" />
+      )
+    },
+    { field: 'balance', headerName: 'Available', width: 140, headerAlign: 'center', align: 'center', flex: 1 },
+
+
+  ]
+
+
   return (
     <Container className={'text-center'} >
       <h1>Welcome, Creator  &#127911; &#127926; &#127908;</h1>
@@ -164,6 +233,32 @@ const EditCreator = ({ creatorToken, address }: any) => {
       </Card>
       <TitleView className={s.title}>My NFTs</TitleView>
       <CreatorNFTs />
+      {nfts.length !== 0 ? <span>
+        NFT EXISTS
+        {/* {nfts.map(element => (
+          <p key={element.key}>{element.identifier}</p>
+        ))} */}
+        <DataGrid
+          rows={nfts}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 50 },
+            },
+          }}
+          autoHeight
+          pagination
+          getRowHeight={({ id, densityFactor }: GridRowHeightParams) => {
+            if ((id as number) % 2 === 0) {
+              return 100 * densityFactor;
+            }
+            return null;
+          }}
+        />
+
+
+      </span> : <span></span>}
+
       <TitleView className={s.title}>My Campaigns</TitleView>
       <CreatorCampaigns />
       {campaignName == "" ? (
