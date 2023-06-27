@@ -32,8 +32,9 @@ import { API_URL, QUERY_URL, NFT_URL } from '../../../config';
 import { contractAddress } from '../../../config';
 import { issueNonFungibleToken } from '../../../utils/issueNonFungibleToken';
 import { useForm } from 'react-hook-form';
-import { hex2a } from '../../../utils/hexUtils';
+import { hex2a, numberToHex } from '../../../utils/hexUtils';
 import { spawn } from 'child_process';
+import { getNftPrice } from '../../../utils/getNftPrice';
 
 interface NftFormat {
   id: string,
@@ -41,6 +42,7 @@ interface NftFormat {
   name: string;
   url: string;
   balance: number;
+  price: number;
 }
 
 
@@ -163,27 +165,44 @@ const EditCreator = ({ creatorToken, address }: any) => {
         .then(response => response.json())
         .then(data => {
           try {
-            console.log(data)
             data.forEach((record: any) => {
-              console.log(record);
               let accountUri = NFT_URL + '/' + record.identifier + '/accounts';
               let balance = 0;
               fetch(accountUri)
                 .then(response => response.json())
                 .then(data => {
                   data.forEach((account: any) => {
-                    console.log(account);
                     if (account.address === contractAddress) {
                       balance = account.balance;
-                      console.log(balance);
-                      const nftInstance = {
-                        id: record.nonce,
-                        identifier: record.identifier,
-                        name: record.name,
-                        url: record.url,
-                        balance: balance,
-                      };
-                      setNfts((prevState: NftFormat[]) => [...prevState, nftInstance]);
+                      var price: number;
+                      fetch(QUERY_URL, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          scAddress: contractAddress,
+                          funcName: 'getNftPrice',
+                          args: [addressFromBech, numberToHex(record.nonce)],
+                        })
+                      })
+                        .then(response => response.json())
+                        .then(data => {
+                          let priceHex = data.data.data.returnData[0];
+                          price = Buffer.from(priceHex, 'base64')[0];
+
+                          const nftInstance = {
+                            id: record.nonce,
+                            identifier: record.identifier,
+                            name: record.name,
+                            url: record.url,
+                            balance: balance,
+                            price: price,
+                          };
+                          setNfts((prevState: NftFormat[]) => [...prevState, nftInstance]);
+                        })
+                        .catch(error => {
+                        });
                     }
                   })
                 });
@@ -197,6 +216,7 @@ const EditCreator = ({ creatorToken, address }: any) => {
 
   }, [nft, setNfts]);
 
+
   const columns: GridColDef[] = [
     { field: 'identifier', headerName: 'Identifier', width: 140, headerAlign: 'center', align: 'center', flex: 1 },
     { field: 'name', headerName: 'Name', width: 140, headerAlign: 'center', align: 'center', flex: 1 },
@@ -207,6 +227,7 @@ const EditCreator = ({ creatorToken, address }: any) => {
       )
     },
     { field: 'balance', headerName: 'Available', width: 140, headerAlign: 'center', align: 'center', flex: 1 },
+    { field: 'price', headerName: `Price in fungible tokens`, width: 140, headerAlign: 'center', align: 'center', flex: 1 },
 
 
   ]
@@ -234,10 +255,6 @@ const EditCreator = ({ creatorToken, address }: any) => {
       <TitleView className={s.title}>My NFTs</TitleView>
       <CreatorNFTs />
       {nfts.length !== 0 ? <span>
-        NFT EXISTS
-        {/* {nfts.map(element => (
-          <p key={element.key}>{element.identifier}</p>
-        ))} */}
         <DataGrid
           rows={nfts}
           columns={columns}

@@ -11,7 +11,7 @@ import { smartContract } from './smartContract';
 
 const resultsParser = new ResultsParser();
 
-export const useGetCreatorToken = ({ address }: any) => {
+export const getCreatorToken = ({ address }: any) => {
   const { network } = useGetNetworkConfig();
   const [creatorToken, setCreatorToken] = useState<string>();
   const proxy = new ProxyNetworkProvider(network.apiAddress);

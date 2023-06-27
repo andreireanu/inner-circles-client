@@ -3,8 +3,8 @@ import Head from 'next/head';
 import { InferGetServerSidePropsType } from 'next'
 
 import {
-  useGetCreatorToken
-} from '../../utils/useGetCreatorToken';
+  getCreatorToken
+} from '../../utils/getCreatorToken';
 
 import { SetUpCreator, EditCreator } from '../../components/CreatorDashboard';
 import { NotAuthRedirectWrapper } from '../../components/NotAuthRedirectWrapper';
@@ -23,7 +23,7 @@ export async function getServerSideProps(context: any) {
 
 const CreatorDashboardPage = ({ data }: any) => {
   const { address } = data;
-  const creatorToken = useGetCreatorToken({ address }) || "";
+  const creatorToken = getCreatorToken({ address }) || "";
 
   return (
     <>

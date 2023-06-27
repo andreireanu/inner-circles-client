@@ -48,10 +48,6 @@ const CreateCampaignModal: FC<CreateCampaignModalProps> = ({
 
   const onSubmit = async (data: any) => {
     setError(null);
-    console.log(data);
-    console.log(data.name);
-    console.log(data.campaignHashtag);
-    console.log(Number(data.tokenQuantity));
     createCampaign(data.name, data.campaignHashtag, data.tokenQuantity); 
   };
 
