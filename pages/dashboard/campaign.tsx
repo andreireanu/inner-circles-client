@@ -228,7 +228,7 @@ const CampaignDashboardPage = ({ data, env }: any) => {
                         pagination
                         getRowHeight={({ id, densityFactor }: GridRowHeightParams) => {
                             if ((id as number) % 2 === 0) {
-                                return 100 * densityFactor;
+                                return 100 * (densityFactor);
                             }
                             return null;
                         }}
@@ -262,8 +262,8 @@ export async function getServerSideProps(context: any) {
         const campaignData = await campaignCollection.find().toArray()
 
         // GET INSTAGRAM SESSION ID  
-        let sessionid = '7553568911%3A4qIjKj518QHeXF%3A12%3AAYejuC1dsj4TstkQG1Hbbd2omVnR13WPgQhay-hukg';
-        /*
+        // let sessionid = '7553568911%3A4qIjKj518QHeXF%3A12%3AAYejuC1dsj4TstkQG1Hbbd2omVnR13WPgQhay-hukg';
+        // /*
         let sessionid = null
 
         await (async () => {
@@ -282,7 +282,7 @@ export async function getServerSideProps(context: any) {
             });
             await ig.account.login(process.env.INSTA_USER as string, process.env.INSTA_PASSWORD as string);
         })();
-        */
+        // */
         return {
             props: {
                 connection: {
