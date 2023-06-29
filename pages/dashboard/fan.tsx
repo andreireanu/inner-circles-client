@@ -1,9 +1,10 @@
 import clientPromise from '../../lib/mongodb'
 import { InferGetServerSidePropsType } from 'next'
 import Head from 'next/head';
-import { SetStateAction, useState } from 'react'
+import { SetStateAction, useEffect, useState } from 'react'
 import { enrollUser } from '../../lib/crud'
 import { IgApiClient } from '../../node_modules/instagram-private-api';
+import { API_URL, contractAddress } from '../../config';
 
 import SendIcon from '@mui/icons-material/Send';
 import {
@@ -21,6 +22,19 @@ import { blue } from '@mui/material/colors';
 
 import { useRouter } from 'next/router';
 import { NotAuthRedirectWrapper } from '../../components/NotAuthRedirectWrapper';
+import TitleView from '../../components/TitleView';
+import { DataGrid, GridCellParams, GridColDef, GridRowHeightParams } from '@mui/x-data-grid';
+import { numberToHex, stringToHex } from '../../utils/hexUtils';
+import { QUERY_URL, NFT_URL } from '../../config';
+
+interface NftFormat {
+  id: string,
+  identifier: string;
+  name: string;
+  url: string;
+  balance: number;
+  priceAndToken: { price: number, buyToken: string };
+}
 
 const FanDashboardPage = ({ data, env }: any) => {
 
@@ -30,6 +44,138 @@ const FanDashboardPage = ({ data, env }: any) => {
   const handleTwitterHandleInputChange = (event: { target: { value: SetStateAction<string>; }; }) => {
     setTwitterHandle(event.target.value);
   };
+
+  const columns: GridColDef[] = [
+    { field: 'identifier', headerName: 'Identifier', width: 140, headerAlign: 'center', align: 'center', flex: 1 },
+    { field: 'name', headerName: 'Name', width: 140, headerAlign: 'center', align: 'center', flex: 1 },
+    {
+      field: 'url', headerName: 'Asset', width: 140, headerAlign: 'center', align: 'center', flex: 1,
+      renderCell: (params) => (
+        <img src={params.value} alt="Nft" width="20%" />
+      )
+    },
+    { field: 'balance', headerName: 'Available for sale', width: 140, headerAlign: 'center', align: 'center', flex: 1 },
+    {
+      field: 'priceAndToken', headerName: `Price`, width: 140, headerAlign: 'center', align: 'center', flex: 1,
+      renderCell: (params) => (
+        <div style={{ whiteSpace: 'normal', wordWrap: 'break-word', wordBreak: 'break-word' }}>
+          {params.value.price} {params.value.buyToken}
+        </div>
+      )
+    },
+    {
+      field: 'actions',
+      headerName: '',
+      width: 120,
+      renderCell: (params: GridCellParams) => {
+        const handleButtonClick = () => {
+          console.log(params.row);
+        };
+
+        return (
+          <button
+            onClick={handleButtonClick}
+            style={{
+              padding: 6,
+              backgroundColor: 'red',
+              color: 'white',
+              border: 'none',
+              borderRadius: 4,
+            }}
+          >
+            BUY
+          </button>
+        );
+      },
+    },
+
+
+
+  ]
+
+  // Get NFTs
+  const [nfts, setNfts] = useState<NftFormat[]>([]);
+  useEffect(() => {
+    let nftsUri = API_URL + '/accounts/' + contractAddress + '/nfts';
+    // Fetch all NFTs in contract
+    fetch(nftsUri)
+      .then(response => response.json())
+      .then(data => {
+        try {
+          data.forEach((record: any) => {
+            let accountUri = NFT_URL + '/' + record.identifier + '/accounts';
+            let balance = 0;
+            // For each NFT get the number available in the smart contract
+            fetch(accountUri)
+              .then(response => response.json())
+              .then(data => {
+                console.log(data)
+                data.forEach((account: any) => {
+                  if (account.address === contractAddress) {
+                    balance = account.balance;
+                    var price: number;
+                    // For each NFT get the price from the smart contract
+                    fetch(QUERY_URL, {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        scAddress: contractAddress,
+                        funcName: 'getNftPrice',
+                        args: [stringToHex(record.collection), numberToHex(record.nonce)],
+                      })
+                    })
+                      .then(response => response.json())
+                      .then(data => {
+                        let priceHex = data.data.data.returnData[0];
+                        price = Buffer.from(priceHex, 'base64')[0];
+                        // For each NFT get the price from the purchasing token identifier
+                        fetch(QUERY_URL, {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            scAddress: contractAddress,
+                            funcName: 'getPaymentToken',
+                            args: [stringToHex(record.collection)],
+                          })
+                        })
+                          .then(response => response.json())
+                          .then(data => {
+                            console.log(data)
+                            let buyTokenHex = data.data.data.returnData[0];
+                            console.log(buyTokenHex)
+                            const buyToken = Buffer.from(buyTokenHex, 'base64').toString('utf-8');
+                            console.log(buyToken);
+                            const nftInstance = {
+                              id: record.nonce,
+                              identifier: record.identifier,
+                              name: record.name,
+                              url: record.url,
+                              balance: balance,
+                              priceAndToken: { price: price, buyToken: buyToken },
+                            };
+                            setNfts((prevState: NftFormat[]) => [...prevState, nftInstance]);
+                          })
+                          .catch(error => {
+                          });
+                      })
+                      .catch(error => {
+                      });
+                  }
+                })
+              })
+              .catch(error => {
+              });
+          })
+        } catch (error) {
+        }
+      })
+      .catch(error => {
+      });
+  }, []);
 
   return (
     <>
@@ -57,8 +203,30 @@ const FanDashboardPage = ({ data, env }: any) => {
             <Typography variant='h4' sx={{ mt: 3, mb: 3, mr: 3 }}> Congratulations! Address <span style={{ color: blue[500] }}>{env.address} </span>is registered with the following Instagram user: &nbsp;
               <span style={{ color: blue[500] }}> @{fan['username']} </span>
             </Typography>
-
           </>}
+      </Container>
+      <Container maxWidth='lg' sx={{ mt: 5, display: 'flex', align: "center", flexDirection: 'column' }} >
+        <TitleView> NFTs for sale </TitleView>
+        {nfts.length !== 0 ? <span>
+          <DataGrid
+            rows={nfts}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 50 },
+              },
+            }}
+            autoHeight
+            pagination
+            getRowHeight={({ id, densityFactor }: GridRowHeightParams) => {
+              if ((id as number) % 2 === 0) {
+                return 100 * densityFactor;
+              }
+              return null;
+            }}
+          />
+        </span> : <span></span>}
+
       </Container>
     </>
   );

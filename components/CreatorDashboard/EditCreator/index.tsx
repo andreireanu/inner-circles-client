@@ -32,9 +32,7 @@ import { API_URL, QUERY_URL, NFT_URL } from '../../../config';
 import { contractAddress } from '../../../config';
 import { issueNonFungibleToken } from '../../../utils/issueNonFungibleToken';
 import { useForm } from 'react-hook-form';
-import { hex2a, numberToHex } from '../../../utils/hexUtils';
-import { spawn } from 'child_process';
-import { getNftPrice } from '../../../utils/getNftPrice';
+import { hex2a, numberToHex, stringToHex } from '../../../utils/hexUtils';
 
 interface NftFormat {
   id: string,
@@ -183,7 +181,7 @@ const EditCreator = ({ creatorToken, address }: any) => {
                         body: JSON.stringify({
                           scAddress: contractAddress,
                           funcName: 'getNftPrice',
-                          args: [addressFromBech, numberToHex(record.nonce)],
+                          args: [stringToHex(nft), numberToHex(record.nonce)],
                         })
                       })
                         .then(response => response.json())
@@ -226,10 +224,8 @@ const EditCreator = ({ creatorToken, address }: any) => {
         <img src={params.value} alt="Nft" width="20%" />
       )
     },
-    { field: 'balance', headerName: 'Available', width: 140, headerAlign: 'center', align: 'center', flex: 1 },
+    { field: 'balance', headerName: 'Available for sale', width: 140, headerAlign: 'center', align: 'center', flex: 1 },
     { field: 'price', headerName: `Price in fungible tokens`, width: 140, headerAlign: 'center', align: 'center', flex: 1 },
-
-
   ]
 
 
@@ -272,10 +268,7 @@ const EditCreator = ({ creatorToken, address }: any) => {
             return null;
           }}
         />
-
-
       </span> : <span></span>}
-
       <TitleView className={s.title}>My Campaigns</TitleView>
       <CreatorCampaigns />
       {campaignName == "" ? (
