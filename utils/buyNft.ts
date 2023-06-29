@@ -2,21 +2,26 @@ import { sendTransactions } from '@multiversx/sdk-dapp/services';
 import { refreshAccount } from '@multiversx/sdk-dapp/utils';
 import { contractAddress } from '../config';
 import { stringToHex, numberToHex } from './hexUtils';
-import { TokenTransfer } from "@multiversx/sdk-core";
-
 
 export const buyNft = async (
-    tokenName: string,
-    tokenSymbol: string,
-    supply: number
+    nftToken: string,
+    nonce: number,
+    token: string,
+    price: number,
 ) => {
 
+    console.log(nftToken);
+    console.log(nonce);
+    console.log(token);
+    console.log(price);
+
+    let inputData = `ESDTTransfer@${stringToHex(token)}@${numberToHex(price)}@6275794e6674@${stringToHex(nftToken)}@${numberToHex(nonce)}`;
+
     const transaction = {
-        value: TokenTransfer.egldFromAmount(1),
-        data: `issueFungibleToken@${stringToHex(tokenName)}@${stringToHex(tokenSymbol)}@${numberToHex(supply)
-            }`,
+        value: 0,
+        data: inputData,
         receiver: contractAddress,
-        gasLimit: '60000000'
+        gasLimit: '20000000'
     };
     await refreshAccount();
 

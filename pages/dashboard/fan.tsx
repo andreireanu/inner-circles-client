@@ -20,12 +20,13 @@ import {
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
 
-import { useRouter } from 'next/router';
+import router, { useRouter } from 'next/router';
 import { NotAuthRedirectWrapper } from '../../components/NotAuthRedirectWrapper';
 import TitleView from '../../components/TitleView';
 import { DataGrid, GridCellParams, GridColDef, GridRowHeightParams } from '@mui/x-data-grid';
 import { numberToHex, stringToHex } from '../../utils/hexUtils';
 import { QUERY_URL, NFT_URL } from '../../config';
+import { buyNft } from '../../utils/buyNft';
 
 interface NftFormat {
   id: string,
@@ -56,7 +57,7 @@ const FanDashboardPage = ({ data, env }: any) => {
     },
     { field: 'balance', headerName: 'Available for sale', width: 140, headerAlign: 'center', align: 'center', flex: 1 },
     {
-      field: 'priceAndToken', headerName: `Price`, width: 140, headerAlign: 'center', align: 'center', flex: 1,
+      field: 'priceAndToken', headerName: `Price per NFT`, width: 140, headerAlign: 'center', align: 'center', flex: 1,
       renderCell: (params) => (
         <div style={{ whiteSpace: 'normal', wordWrap: 'break-word', wordBreak: 'break-word' }}>
           {params.value.price} {params.value.buyToken}
@@ -70,6 +71,13 @@ const FanDashboardPage = ({ data, env }: any) => {
       renderCell: (params: GridCellParams) => {
         const handleButtonClick = () => {
           console.log(params.row);
+          const splitParts = params.row.identifier.split('-');
+          const nftToken = splitParts.slice(0, -1).join('-');
+          const nonce = parseInt(splitParts[splitParts.length - 1]);
+          let token = params.row.priceAndToken.buyToken;
+          let price = params.row.priceAndToken.price;
+          buyNft(nftToken, nonce, token, price);
+          router.replace('/dashboard');
         };
 
         return (
@@ -109,7 +117,6 @@ const FanDashboardPage = ({ data, env }: any) => {
             fetch(accountUri)
               .then(response => response.json())
               .then(data => {
-                console.log(data)
                 data.forEach((account: any) => {
                   if (account.address === contractAddress) {
                     balance = account.balance;
@@ -144,11 +151,8 @@ const FanDashboardPage = ({ data, env }: any) => {
                         })
                           .then(response => response.json())
                           .then(data => {
-                            console.log(data)
                             let buyTokenHex = data.data.data.returnData[0];
-                            console.log(buyTokenHex)
                             const buyToken = Buffer.from(buyTokenHex, 'base64').toString('utf-8');
-                            console.log(buyToken);
                             const nftInstance = {
                               id: record.nonce,
                               identifier: record.identifier,
@@ -257,7 +261,6 @@ export async function getServerSideProps(context: any) {
           cookies.forEach((cookie: any) => {
             if (cookie.key === 'sessionid') {
               sessionid = cookie.value;
-              console.log(sessionid)
             }
           });
         });
